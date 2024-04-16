@@ -10,6 +10,7 @@ if __name__ == '__main__':
     window.title("Laberinto")
     # Define window's size
     window.geometry("500x550")
+    window.configure(bg='dark gray')
     # Create Canvas
     canvas = tk.Canvas(window, bg="light gray", height=500, width=500)
     canvas.pack()
@@ -17,6 +18,6 @@ if __name__ == '__main__':
     laberinto = Labyrinth(canvas)
 
     laberinto._draw_line(0, 0)
-    laberinto._draw_line(0, 0, orientation="h")
+    # laberinto._draw_line(0, 0, orientation="h")
 
     window.mainloop()

@@ -5,6 +5,7 @@ Module to define the Tile class used as basic unit into the labyrinth
 """
 
 import tkinter as tk
+from PIL import Image, ImageTk  # For show turtle image and handle it
 
 
 class Tile:
@@ -17,6 +18,8 @@ class Tile:
         self.position = (pos_x, pos_y)
         # Represent borders as: [Top, bottom, left, right]
         self.borders = [True, True, True, True]
+        self.turtle = False  # If True, draw a turtle in the current tile to simulate de player move
+        self.turtle_orientation = 'r'  # Define turtle orientation: r: right, l: left, u: up, d: down
 
     def draw(self, sketch: tk.Canvas, length=10, width=5, bg='lightblue'):
         """
@@ -27,6 +30,14 @@ class Tile:
         :param bg:
         :return:
         """
+        # Draw the turtle over the tile background
+        # ---------------------------------------------------------------------
+        # Still working on turtle draw method organization
+        # ---------------------------------------------------------------------
+        if self.turtle:
+            turtle_size = length - length // 3
+            self._draw_turtle(sketch, size=turtle_size)
+
         # Draw the background color for the tile
         sketch.create_rectangle(
             self.position[0], self.position[1], self.position[0] + length, self.position[1] + length, fill=bg,
@@ -40,8 +51,7 @@ class Tile:
                 sketch.create_line(line_coords[0], line_coords[1], line_coords[2], line_coords[3], width=width)
             else:
                 sketch.create_line(
-                    line_coords[0], line_coords[1], line_coords[2], line_coords[3], fill='white', width=width
-                )
+                    line_coords[0], line_coords[1], line_coords[2], line_coords[3], fill='white', width=width)
 
     def _get_line_coords(self, border_id: int, length: int, width: int):
         """
@@ -73,8 +83,13 @@ class Tile:
 
         return x_init, y_init, x_final, y_final
 
+    def _draw_turtle(self, sketch, size=10):
+        turtle_img_path = "resources/turtle.png"
+        turtle_img = Image.open()
+        pass
 
-def place_tiles(sketch: tk.Canvas, cv_size: int, tiles_amount: int, wall_width=1, mode='run'):
+
+def array_tiles(sketch: tk.Canvas, cv_size: int, tiles_amount: int, wall_width=1, mode='run'):
     """
 
     :param sketch: Tkinter canvas to draw the tiles.
@@ -103,12 +118,14 @@ if __name__ == '__main__':
     # Define window's size
     window.geometry("500x550")
     window.configure(bg='dark gray')
+    window.resizable(False, False)
     # Create Canvas
     canvas_size = 500
     canvas = tk.Canvas(window, bg="light gray", height=canvas_size, width=canvas_size)
-    canvas.pack()
-    tile = Tile(5, 5)
+    canvas.pack()  # side=tk.LEFT)
+    tile = Tile(0, 0)
+    tile.turtle = True
     tile.draw(canvas, 200, width=5)
-    # place_tiles(canvas, canvas_size, 5)
+    # array_tiles(canvas, canvas_size, 5)
 
     window.mainloop()

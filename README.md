@@ -15,7 +15,7 @@ To use this project, make sure you have Python installed. Then, follow these ste
 1. Clone the repository:
 
     ```
-    git clone https://github.com/your_username/random-labyrinth-generator.git
+    git clone https://github.com/your_username/Laberinto.git
     ```
 
 2. Navigate to the project directory:

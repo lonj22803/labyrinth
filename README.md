@@ -1,12 +1,13 @@
-# Random Labyrinth Generator and Solver
+# Turtle Maze
 
-This Python project aims to generate random labyrinth structures using greedy strategies and provides a graphical user interface (GUI) built with Tkinter. Users can generate new labyrinths or solve the current one.
+This Python project generates a grid-based maze and places a turtle at the start. The turtle can navigate through the maze, with its movements visualized on a Tkinter GUI.
 
 ## Features
 
-- Random labyrinth generation using greedy strategies.
-- Graphical User Interface (GUI) built with Tkinter for easy interaction.
-- Labyrinth solving functionality to find the path from the start to the end.
+- Maze generation with customizable grid size.
+- Turtle navigation through the maze.
+- Graphical User Interface (GUI) built with Tkinter for easy interaction and visualization.
+- Border visualization updates as the turtle moves through the maze.
 
 ## Installation
 
@@ -15,19 +16,13 @@ To use this project, make sure you have Python installed. Then, follow these ste
 1. Clone the repository:
 
     ```
-    git clone https://github.com/your_username/Laberinto.git
+    git clone https://github.com/DnelZpt/TurtleMaze.git
     ```
 
 2. Navigate to the project directory:
 
     ```
-    cd random-labyrinth-generator
-    ```
-
-3. Install the required dependencies:
-
-    ```
-    pip install -r requirements.txt
+    cd TurtleMaze
     ```
 
 ## Usage

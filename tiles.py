@@ -23,12 +23,11 @@ class Tile:
         self.bg_ID = None
 
     def _get_turtle_image(self):
-        # Determine the size of the canvas
-        c_size = self.canvas.winfo_reqwidth() - 2  # Canvas is always a square (height = width)
+
         # Select an appropriate image size for the turtle based on the size of the canvas
-        if c_size > 500:
+        if self._length > 200:
             turtle_img_size = "100px"
-        elif c_size > 300:
+        elif self._length > 100:
             turtle_img_size = "75px"
         else:
             turtle_img_size = "50px"
@@ -81,7 +80,7 @@ class Tile:
                                                              line_coords[3], fill='white',
                                                              width=self.border_width)
 
-    def update_bg_color(self, color: str):
+    def update_bg_color(self, color: str):  # probably should delete this method    
         """
         This method updates the background color of the tile.
         :param color: (str) The new color for the background of the tile.
@@ -219,12 +218,16 @@ def array_tiles(sketch: tk.Canvas, cv_size: int, tiles_amount: int):
     :return: [list] a list with every tile with a row-major order
     """
     tile_length = cv_size // tiles_amount
+    print(tile_length)
     # Need to compensate the width space
     tiles = list()
     for m in range(tiles_amount):
         for n in range(tiles_amount):
             tile_mn = Tile(sketch, n * tile_length, m * tile_length, length=tile_length)
-            tile_mn.draw()
+            color = 'lightblue'
+            if m % 2 != 0:
+                color = 'lightgreen'
+            tile_mn.draw(bg=color)
             if m == 0 and n == 0:
                 tile_mn.change_turtle_state(erase=False)
 
@@ -245,7 +248,7 @@ if __name__ == '__main__':
     canvas_size = 1000
     canvas = tk.Canvas(window, bg="light gray", height=canvas_size, width=canvas_size)
     canvas.pack()
-    tiles_array = array_tiles(canvas, canvas_size, 20)
+    tiles_array = array_tiles(canvas, canvas_size, 10)
     # tile = Tile(canvas, 0, 0, length=100)
     # tile.turtle = True
     #

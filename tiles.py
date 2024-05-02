@@ -80,16 +80,47 @@ class Tile:
         # method is used to draw a white line, effectively erasing the border.
         for k in range(len(self.borders)):
             # Line coords get a 4 element tuple: (x_i, y_i, x_f, y_f)
-            line_coords = self._get_line_coords(k)  # Get coordinates for the current border
+            self._draw_border(k)
+            # line_coords = self._get_line_coords(k)  # Get coordinates for the current border
+            #
+            # if self.borders[k]:
+            #     self.borders_ID[k] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
+            #                                                  line_coords[3],
+            #                                                  width=self.border_width)
+            # else:
+            #     self.borders_ID[k] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
+            #                                                  line_coords[3], fill='lightblue1',
+            #                                                  width=self.border_width)
 
-            if self.borders[k]:
-                self.borders_ID[k] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
-                                                             line_coords[3],
-                                                             width=self.border_width)
-            else:
-                self.borders_ID[k] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
-                                                             line_coords[3], fill='lightblue1',
-                                                             width=self.border_width)
+    def _draw_border(self, border_id: int):
+        """
+        This method draws a border on the tile based on the given border_id.
+
+        The method first gets the coordinates for the border line using the _get_line_coords method.
+        If the border exists (the corresponding element in the borders list is True), the create_line method of the
+        canvas is used to draw the border.
+        If the border does not exist (the corresponding element in the borders list is False), the create_line
+        method is used to draw a line with the same color as the background, effectively erasing the border.
+
+        :param border_id: (int) The id of the border to be drawn. The id corresponds to the following borders:
+                          0 - Top border
+                          1 - Bottom border
+                          2 - Left border
+                          3 - Right border
+        """
+        # Get coordinates for the current border
+        line_coords = self._get_line_coords(border_id)
+
+        # If the border exists, draw the border
+        if self.borders[border_id]:
+            self.borders_ID[border_id] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
+                                                                 line_coords[3],
+                                                                 width=self.border_width)
+        # If the border does not exist, draw a line with similar background color to erase the border
+        else:
+            self.borders_ID[border_id] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
+                                                                 line_coords[3], fill='lightblue1',
+                                                                 width=self.border_width)
 
     def update_border_visualization(self, border_id: int, state: bool):
         """
@@ -107,14 +138,16 @@ class Tile:
             raise ValueError('Border ID have to be an int between [0, 3].')
 
         self.canvas.delete(self.borders_ID[border_id])
-        line_coords = self._get_line_coords(border_id)
-
-        if self.borders[border_id]:
-            self.borders_ID[border_id] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
-                                                                 line_coords[3], width=self.border_width)
-        else:
-            self.borders_ID[border_id] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
-                                                                 line_coords[3], fill='lightblue1', width=self.border_width)
+        self._draw_border(border_id)
+        # line_coords = self._get_line_coords(border_id)
+        #
+        # if self.borders[border_id]:
+        #     self.borders_ID[border_id] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
+        #                                                          line_coords[3], width=self.border_width)
+        # else:
+        #     self.borders_ID[border_id] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
+        #                                                          line_coords[3], fill='lightblue1',
+        #                                                          width=self.border_width)
 
     def _get_line_coords(self, border_id: int):
         """
@@ -179,14 +212,6 @@ class Tile:
         pos_y = self.position[1] + self._length // 4
         self.turtle_ID = self.canvas.create_image(pos_x, pos_y, image=self.turtle_image, anchor=tk.NW)
 
-        # # Rotate the turtle image based on the turtle_orientation attribute
-        # if self.turtle_orientation == 'r':
-        #     self.canvas.itemconfig(self.turtle_ID, image=self.turtle_image.rotate(-90))
-        # elif self.turtle_orientation == 'l':
-        #     self.canvas.itemconfig(self.turtle_ID, image=self.turtle_image.rotate(90))
-        # elif self.turtle_orientation == 'u':
-        #     self.canvas.itemconfig(self.turtle_ID, image=self.turtle_image.rotate(180))
-
     def change_turtle_state(self, erase=True):
         """
         This method changes the state of the turtle on the tile.
@@ -207,34 +232,8 @@ class Tile:
             self.turtle = True
 
 
-def array_tiles(sketch: tk.Canvas, cv_size: int, tiles_amount: int):
-    """
-
-    :param sketch: Tkinter canvas to draw the tiles.
-    :param cv_size: [int] canvas border size (it assumes that canvas is a square).
-    :param tiles_amount: [int] tiles amount per row and column.
-    :return: [list] a list with every tile with a row-major order
-    """
-    tile_length = cv_size // tiles_amount
-    # Need to compensate the width space
-    tiles = list()
-    for m in range(tiles_amount):
-        for n in range(tiles_amount):
-            tile_mn = Tile(sketch, n * tile_length, m * tile_length, length=tile_length)
-            color = 'lightblue'
-            if m % 2 != 0:
-                color = 'lightgreen'
-            tile_mn.draw(bg=color)
-            if m == 0 and n == 0:
-                tile_mn.rotate_turtle('d')
-                tile_mn.change_turtle_state(erase=False)
-
-            tiles.append(tile_mn)
-
-    return tiles
-
-
 if __name__ == '__main__':
+    from gui_test import array_tiles
     # Create window
     window = tk.Tk()
     window.title("Tiles")

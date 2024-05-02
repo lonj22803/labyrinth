@@ -17,22 +17,33 @@ class Tile:
         self.borders = [True, True, True, True]
         self.borders_ID = [None, None, None, None]
         self.turtle = False  # If True, draw a turtle in the current tile to simulate de player move
+        self.turtle_orientation = 'u'  # Define turtle orientation: r: right, l: left, u: up, d: down
         self.turtle_image = self._get_turtle_image()  # Image as instance attribute to avoid python garbage collection
-        self.turtle_orientation = 'r'  # Define turtle orientation: r: right, l: left, u: up, d: down
-        # TODO: makes turtle_orientation useful
         self.bg_ID = None
 
     def _get_turtle_image(self):
+        """
+        This method selects an appropriate image size for the turtle based on the size of the canvas.
+        It constructs the path to the turtle image file and returns a PhotoImage object created from that file.
 
-        # Select an appropriate image size for the turtle based on the size of the canvas
+        The method checks the length of the tile and based on its size, it selects the appropriate turtle image size.
+        The turtle image size can be "100", "75", or "50", corresponding to a tile length greater than 200,
+        greater than 100, or less than or equal to 100, respectively.
+
+        The path to the turtle image file is constructed using the selected turtle image size and the current
+        orientation of the turtle. The path is then used to create a PhotoImage object, which is returned by the method.
+
+        :return tk.PhotoImage: A PhotoImage object created from the turtle image file.
+        """
+        # Select an appropriate image size for the turtle based on the size of the tile
         if self._length > 200:
-            turtle_img_size = "100px"
+            turtle_img_size = "100"
         elif self._length > 100:
-            turtle_img_size = "75px"
+            turtle_img_size = "75"
         else:
-            turtle_img_size = "50px"
-
-        turtle_img_path = f"resources/turtle_{turtle_img_size}.png"
+            turtle_img_size = "50"
+        # Construct the path to the turtle image file
+        turtle_img_path = f"resources/{turtle_img_size}/turtle_{turtle_img_size}px_{self.turtle_orientation}.png"
         return tk.PhotoImage(file=turtle_img_path)
 
     def draw(self, bg='lightblue', turtle=False):
@@ -77,23 +88,8 @@ class Tile:
                                                              width=self.border_width)
             else:
                 self.borders_ID[k] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
-                                                             line_coords[3], fill='white',
+                                                             line_coords[3], fill='lightblue1',
                                                              width=self.border_width)
-
-    def update_bg_color(self, color: str):  # probably should delete this method    
-        """
-        This method updates the background color of the tile.
-        :param color: (str) The new color for the background of the tile.
-        """
-        # Delete the existing rectangle
-        self.canvas.delete(self.bg_ID)
-
-        # Draw a new rectangle with the specified color
-        self.bg_ID = self.canvas.create_rectangle(
-            self.position[0], self.position[1], self.position[0] + self._length, self.position[1] + self._length,
-            fill=color,
-            outline=''
-        )
 
     def update_border_visualization(self, border_id: int, state: bool):
         """
@@ -118,7 +114,7 @@ class Tile:
                                                                  line_coords[3], width=self.border_width)
         else:
             self.borders_ID[border_id] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
-                                                                 line_coords[3], fill='white', width=self.border_width)
+                                                                 line_coords[3], fill='lightblue1', width=self.border_width)
 
     def _get_line_coords(self, border_id: int):
         """
@@ -164,6 +160,7 @@ class Tile:
         """
         if direction in ['r', 'l', 'u', 'd']:
             self.turtle_orientation = direction
+            self.turtle_image = self._get_turtle_image()
         else:
             raise ValueError("Invalid direction. It must be 'r' for right, 'l' for left, 'u' for up, or 'd' for down.")
 
@@ -205,6 +202,7 @@ class Tile:
                 self.canvas.delete(self.turtle_ID)
                 self.turtle = False
         else:
+
             self._draw_turtle()
             self.turtle = True
 
@@ -218,7 +216,6 @@ def array_tiles(sketch: tk.Canvas, cv_size: int, tiles_amount: int):
     :return: [list] a list with every tile with a row-major order
     """
     tile_length = cv_size // tiles_amount
-    print(tile_length)
     # Need to compensate the width space
     tiles = list()
     for m in range(tiles_amount):
@@ -229,6 +226,7 @@ def array_tiles(sketch: tk.Canvas, cv_size: int, tiles_amount: int):
                 color = 'lightgreen'
             tile_mn.draw(bg=color)
             if m == 0 and n == 0:
+                tile_mn.rotate_turtle('d')
                 tile_mn.change_turtle_state(erase=False)
 
             tiles.append(tile_mn)
@@ -249,13 +247,6 @@ if __name__ == '__main__':
     canvas = tk.Canvas(window, bg="light gray", height=canvas_size, width=canvas_size)
     canvas.pack()
     tiles_array = array_tiles(canvas, canvas_size, 10)
-    # tile = Tile(canvas, 0, 0, length=100)
-    # tile.turtle = True
-    #
-    # tile.draw()
-    # tile.update_border(3, True)
-    # array_tiles(canvas, canvas_size, 5)
-    # print("using Method 2:")
-    # print(canvas.winfo_height())
-    # print(canvas.winfo_width()
+    tiles_array[2].update_border_visualization(2, False)
+
     window.mainloop()

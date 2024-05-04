@@ -83,16 +83,6 @@ class Tile:
         for k in range(len(self.borders)):
             # Line coords get a 4 element tuple: (x_i, y_i, x_f, y_f)
             self._draw_border(k)
-            # line_coords = self._get_line_coords(k)  # Get coordinates for the current border
-            #
-            # if self.borders[k]:
-            #     self.borders_ID[k] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
-            #                                                  line_coords[3],
-            #                                                  width=self.border_width)
-            # else:
-            #     self.borders_ID[k] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
-            #                                                  line_coords[3], fill='lightblue1',
-            #                                                  width=self.border_width)
 
     def _draw_border(self, border_id: int):
         """
@@ -141,15 +131,6 @@ class Tile:
 
         self.canvas.delete(self.borders_ID[border_id])
         self._draw_border(border_id)
-        # line_coords = self._get_line_coords(border_id)
-        #
-        # if self.borders[border_id]:
-        #     self.borders_ID[border_id] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
-        #                                                          line_coords[3], width=self.border_width)
-        # else:
-        #     self.borders_ID[border_id] = self.canvas.create_line(line_coords[0], line_coords[1], line_coords[2],
-        #                                                          line_coords[3], fill='lightblue1',
-        #                                                          width=self.border_width)
 
     def _get_line_coords(self, border_id: int):
         """
@@ -233,24 +214,6 @@ class Tile:
             self._draw_turtle()
             self.turtle = True
 
-    def tile_after(self):
-        # read json file, if it does not exist, do nothing
-        if os.path.exists('/dev/shm/graph.json'):
-            with open('/dev/shm/graph.json', 'r') as f:
-                tile_info = json.load(f)
-                # if it exists, update the tile with the info in the json file
-            print(tile_info)
-                # for border_id, state in tile_info.items():
-                #
-                #     print("Border ID: ", border_id)
-                #     print("State: ", state)
-                    # self.update_border_visualization(int(border_id), state)
-            f.close()
-            os.remove('/dev/shm/graph.json')
-        else:
-            print("The file does not exist.")
-        self.canvas.after(100, self.tile_after)
-
 
 if __name__ == '__main__':
     from gui_test import array_tiles
@@ -268,5 +231,5 @@ if __name__ == '__main__':
     canvas.pack()
     tiles_array = array_tiles(canvas, canvas_size, 10)
     tiles_array[2].update_border_visualization(2, False)
-    window.after(1000, tiles_array[0].tile_after)
+    # window.after(1000, tiles_array[0].tile_after)
     window.mainloop()

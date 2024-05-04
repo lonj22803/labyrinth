@@ -98,15 +98,53 @@ class Labyrinth:
             with open('/dev/shm/graph.json', 'r') as f:
                 graph = json.load(f)
             print(graph)
+            self._check_walls(graph)
 
             f.close()
-            os.remove('/dev/shm/graph.json')
+            # os.remove('/dev/shm/graph.json')
         else:
             print("The file does not exist.")
-        self.canvas.after(100, self.update_maze)
 
-        for tile in self.list_tiles:
-            pass
+        self.canvas.after(300, self.update_maze)
+
+    def _check_walls(self, graph: dict):
+        vertex_list = graph['V']
+        edges_list = graph['E']
+        # vertex_o is the origin vertex, vertex_i is the destination vertex
+        for vertex_o in vertex_list:
+            for vertex_i in vertex_list[vertex_o]:
+                if edges_list.get(f"({vertex_o}, {vertex_i})") == 0 or edges_list.get(f"({vertex_i}, {vertex_o})") == 0:
+                    print(f"There is a wall in edge:     ({vertex_o}, {vertex_i})")
+                else:
+                    print(f"There is not a wall in edge: ({vertex_o}, {vertex_i})")
+                    # 1) Determine the border of the tile to be deleted: u, b, l, r ==> 0, 1, 2, 3
+                    # Si estan en la misma fila: l, r ==> l si vertex_o < vertex_i, r si vertex_o > vertex_i
+                    # Si estan en la misma columna: u, b ==> u si vertex_o < vertex_i, b si vertex_o > vertex_i
+                    # 2) Delete the border tile.update_border_visualization(border_id, erase=True)
+                    self._delete_border(int(vertex_o), int(vertex_i))
+
+    def _delete_border(self, vertex_o, vertex_i):
+        """
+        Delete the border of a tile based on the positions of two vertices.
+
+        :param vertex_o: (int) The origin vertex.
+        :param vertex_i: (int) The destination vertex.
+        :return: None
+        """
+        # Calculate the row and column positions of the vertices
+        row_o, col_o = divmod(vertex_o, self.columns)
+        row_i, col_i = divmod(vertex_i, self.columns)
+
+        # Determine the border to be deleted
+        if row_o == row_i:  # The vertices are in the same row
+            border_id = 2 if col_o < col_i else 3  # Delete left border if vertex_o < vertex_i, else delete right border
+        else:  # The vertices are in the same column
+            border_id = 0 if row_o < row_i else 1  # Delete upper border if vertex_o < vertex_i, else delete bottom
+            # border
+
+        # Get the tile and delete the border
+        tile = self.list_tiles[vertex_o]
+        tile.update_border_visualization(border_id, state=False)
 
     def get_tile(self, row, column):
         """
@@ -122,4 +160,5 @@ class Labyrinth:
 if __name__ == '__main__':
     maze = Labyrinth(2, 3)
     maze.get_board()
+    maze.window.after(5000, maze.update_maze)
     maze.window.mainloop()

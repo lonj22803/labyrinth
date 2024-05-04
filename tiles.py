@@ -5,10 +5,12 @@ Module to define the Tile class used as basic unit into the labyrinth
 """
 
 import tkinter as tk
+import json
+import os
 
 
 class Tile:
-    def __init__(self, sketch: tk.Canvas, pos_x=0, pos_y=0, length=100, width=5):
+    def __init__(self, sketch: tk.Canvas, pos_x=0, pos_y=0, length=100, width=2):
         self.border_width = width
         self.canvas = sketch
         self.position = (pos_x, pos_y)
@@ -231,21 +233,40 @@ class Tile:
             self._draw_turtle()
             self.turtle = True
 
+    def tile_after(self):
+        # read json file, if it does not exist, do nothing
+        if os.path.exists('/dev/shm/graph.json'):
+            with open('/dev/shm/graph.json', 'r') as f:
+                tile_info = json.load(f)
+                # if it exists, update the tile with the info in the json file
+            print(tile_info)
+                # for border_id, state in tile_info.items():
+                #
+                #     print("Border ID: ", border_id)
+                #     print("State: ", state)
+                    # self.update_border_visualization(int(border_id), state)
+            f.close()
+            os.remove('/dev/shm/graph.json')
+        else:
+            print("The file does not exist.")
+        self.canvas.after(100, self.tile_after)
+
 
 if __name__ == '__main__':
     from gui_test import array_tiles
+
     # Create window
     window = tk.Tk()
     window.title("Tiles")
     # Define window's size
-    window.geometry("500x500")
+    # window.geometry("1300x700")
     window.configure(bg='dark gray')
     window.resizable(False, False)
     # Create Canvas
-    canvas_size = 1000
+    canvas_size = 600
     canvas = tk.Canvas(window, bg="light gray", height=canvas_size, width=canvas_size)
     canvas.pack()
     tiles_array = array_tiles(canvas, canvas_size, 10)
     tiles_array[2].update_border_visualization(2, False)
-
+    window.after(1000, tiles_array[0].tile_after)
     window.mainloop()

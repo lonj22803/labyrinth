@@ -14,6 +14,7 @@ def array_tiles(sketch: tk.Canvas, cv_size: int, tiles_amount: int):
     :return: [list] a list with every tile with a row-major order
     """
     tile_length = cv_size // tiles_amount
+    print(tile_length)
     # Need to compensate the width space
     tiles = list()
     for m in range(tiles_amount):

@@ -123,7 +123,7 @@ class Labyrinth:
                     # 2) Delete the border tile.update_border_visualization(border_id, erase=True)
                     self._delete_border(int(vertex_o), int(vertex_i))
 
-    def _delete_border(self, vertex_o, vertex_i):
+    def _delete_border(self, vertex_o: int, vertex_i: int):
         """
         Delete the border of a tile based on the positions of two vertices.
 
@@ -137,13 +137,13 @@ class Labyrinth:
 
         # Determine the border to be deleted
         if row_o == row_i:  # The vertices are in the same row
-            border_id = 2 if col_o < col_i else 3  # Delete left border if vertex_o < vertex_i, else delete right border
+            border_id = 3 if col_o < col_i else 2  # Delete left border if vertex_o < vertex_i, else delete right border
+            print(f"row_o: {row_o}, col_o: {col_o}, row_i: {row_i}, col_i: {col_i}, border_id: {border_id}")
         else:  # The vertices are in the same column
-            border_id = 0 if row_o < row_i else 1  # Delete upper border if vertex_o < vertex_i, else delete bottom
+            border_id = 1 if row_o < row_i else 0  # Delete upper border if vertex_o < vertex_i, else delete bottom
             # border
-
         # Get the tile and delete the border
-        tile = self.list_tiles[vertex_o]
+        tile = self.get_tile(row_o, col_o)
         tile.update_border_visualization(border_id, state=False)
 
     def get_tile(self, row, column):

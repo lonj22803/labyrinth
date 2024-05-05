@@ -5,8 +5,6 @@ Module to define the Tile class used as basic unit into the labyrinth
 """
 
 import tkinter as tk
-import json
-import os
 
 
 class Tile:
@@ -18,6 +16,7 @@ class Tile:
         # Represent borders as: [Top, bottom, left, right]
         self.borders = [True, True, True, True]
         self.borders_ID = [None, None, None, None]
+        self.turtle_ID = None
         self.turtle = False  # If True, draw a turtle in the current tile to simulate de player move
         self.turtle_orientation = 'u'  # Define turtle orientation: r: right, l: left, u: up, d: down
         self.turtle_image = self._get_turtle_image()  # Image as instance attribute to avoid python garbage collection
@@ -42,8 +41,10 @@ class Tile:
             turtle_img_size = "100"
         elif self._length > 100:
             turtle_img_size = "75"
-        else:
+        elif self._length > 75:
             turtle_img_size = "50"
+        else:
+            turtle_img_size = "25"
         # Construct the path to the turtle image file
         turtle_img_path = f"resources/{turtle_img_size}/turtle_{turtle_img_size}px_{self.turtle_orientation}.png"
         return tk.PhotoImage(file=turtle_img_path)
@@ -210,26 +211,22 @@ class Tile:
                 self.canvas.delete(self.turtle_ID)
                 self.turtle = False
         else:
-
+            if self.turtle_ID:
+                self.canvas.delete(self.turtle_ID)  # Delete the turtle if it exists
             self._draw_turtle()
             self.turtle = True
 
 
 if __name__ == '__main__':
-    from gui_test import array_tiles
-
     # Create window
     window = tk.Tk()
     window.title("Tiles")
-    # Define window's size
-    # window.geometry("1300x700")
     window.configure(bg='dark gray')
     window.resizable(False, False)
     # Create Canvas
     canvas_size = 600
     canvas = tk.Canvas(window, bg="light gray", height=canvas_size, width=canvas_size)
     canvas.pack()
-    tiles_array = array_tiles(canvas, canvas_size, 10)
-    tiles_array[2].update_border_visualization(2, False)
-    # window.after(1000, tiles_array[0].tile_after)
+    tile = Tile(canvas, 0, 0, 100)
+    tile.draw()
     window.mainloop()

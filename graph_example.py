@@ -1,5 +1,5 @@
 """
-Este script genera un archvo json con la información de los nodos y aristas de la red de la SE.
+This script creates an example graph and a solution for the graph. The graph is saved as a json file in /dev/shm (ram).
 """
 
 import json
@@ -18,3 +18,14 @@ with open('/dev/shm/graph.json', 'w') as f:
 print(G)
 # Close the file
 f.close()
+
+# Generate a solution example for the graph
+# This is a directed graph, 'f' represents the incident node for the final node
+G_SOL = {0: 1, 1: 4, 4: 5, 5: 'f'}  # The solution is the path: 0 -> 1 -> 4 -> 5 -> 'f'
+
+# Save the solution as a json file in /dev/shm (ram)
+with open('/dev/shm/sol_graph.json', 'w') as f:
+    json.dump(G_SOL, f, indent=4)
+print(G_SOL)
+f.close()
+

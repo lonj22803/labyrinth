@@ -107,13 +107,12 @@ class Labyrinth:
                 graph = json.load(f)
             print(graph)
             self._check_walls(graph)
-
             f.close()
             os.remove('/dev/shm/graph.json')
         else:
-            print("The file does not exist.")
+            print("The structure graph does not exist.")
 
-        self.canvas.after(300, self.update_maze)
+        self.canvas.after(200, self.update_maze)
 
     def _check_walls(self, graph: dict):
         vertex_list = graph['V']
@@ -122,18 +121,26 @@ class Labyrinth:
         for vertex_o in vertex_list:
             for vertex_i in vertex_list[vertex_o]:
                 if edges_list.get(f"({vertex_o}, {vertex_i})") == 0 or edges_list.get(f"({vertex_i}, {vertex_o})") == 0:
-                    print(f"There is a wall in edge:     ({vertex_o}, {vertex_i})")
+                    # print(f"There is a wall in edge:     ({vertex_o}, {vertex_i})")
                     self._update_border(int(vertex_o), int(vertex_i), state=True)
                 else:
-                    print(f"There is not a wall in edge: ({vertex_o}, {vertex_i})")
-                    # 1) Determine the border of the tile to be deleted: u, b, l, r ==> 0, 1, 2, 3
-                    # Si estan en la misma fila: l, r ==> l si vertex_o < vertex_i, r si vertex_o > vertex_i
-                    # Si estan en la misma columna: u, b ==> u si vertex_o < vertex_i, b si vertex_o > vertex_i
-                    # 2) Delete the border tile.update_border_visualization(border_id, erase=True)
+                    # print(f"There is not a wall in edge: ({vertex_o}, {vertex_i})")
                     self._update_border(int(vertex_o), int(vertex_i))
 
     def _update_border(self, vertex_o: int, vertex_i: int, state=False):
+        """
+        Update the border of a tile in the labyrinth.
 
+        This method calculates the row and column positions of two vertices, determines which border of the tile
+        at the position of the first vertex needs to be updated based on the relative positions of the vertices,
+        and then updates the border's state.
+
+        :param vertex_o: (int) The origin vertex.
+        :param vertex_i: (int) The destination vertex.
+        :param state: (bool) The state to set the border to. If True, the border is set to exist.
+                      If False, the border is set to not exist.
+        :return: None
+        """
         # Calculate the row and column positions of the vertices
         row_o, col_o = divmod(vertex_o, self.columns)
         row_i, col_i = divmod(vertex_i, self.columns)
@@ -159,9 +166,73 @@ class Labyrinth:
         index = row * self.columns + column
         return self.list_tiles[index]
 
+    def solve_maze(self):
+        """
+        Solve the maze based on the information in a JSON file.
+
+        This method reads a JSON file located at '/dev/shm/sol_graph.json'.
+        If the file exists, it loads the JSON data into a dictionary and checks the solution path in the
+        maze based on this data. If the file does not exist, it prints a message indicating this.
+
+        After checking the solution path, the method schedules itself to be called again after 300 milliseconds.
+        :return: None
+        """
+        # read json file, if it does not exist, do nothing
+        if os.path.exists('/dev/shm/sol_graph.json'):
+            with open('/dev/shm/sol_graph.json', 'r') as f:
+                sol_graph = json.load(f)
+            print(sol_graph)
+            self._mark_path(sol_graph)
+
+            f.close()
+            os.remove('/dev/shm/sol_graph.json')
+        else:
+            print("Solution file does not exist.")
+
+        self.canvas.after(200, self.solve_maze)
+
+    def _mark_path(self, sol_graph: dict):
+        """
+        Mark the solution path in the labyrinth.
+
+        This method iterates over the solution graph, which is a dictionary where each key-value pair represents a step
+        in the solution path. For each step, it calculates the row and column positions of the vertices, gets the tile
+        at the position of the first vertex, determines the direction of the turtle based on the relative positions of
+        the vertices, rotates the turtle to the determined direction, and then draws the turtle on the tile.
+
+        :param sol_graph: (dict) The solution graph, where each key-value pair represents a step in the solution path.
+        :return: None
+        """
+        for vertex_o in sol_graph:
+            vertex_i = sol_graph[vertex_o]
+            print(f"Path: {vertex_o} -> {vertex_i}")
+            # Calculate the row and column positions of the vertices
+            if vertex_i == 'f':
+                row_o, col_o = divmod(int(vertex_o), self.columns)
+                tile = self.get_tile(row_o, col_o)
+                tile.rotate_turtle(direction='u')  # Rotate the turtle to the up direction
+                # Draw the turtle on the tile
+                tile.change_turtle_state(erase=False)
+
+            else:
+                row_o, col_o = divmod(int(vertex_o), self.columns)
+                row_i, col_i = divmod(int(vertex_i), self.columns)
+                # Get the tile
+                tile = self.get_tile(row_o, col_o)
+                # Determine the direction of the turtle
+                if row_o == row_i:  # The vertices are in the same row
+                    direction = 'r' if col_o < col_i else 'l'  # Move right if vertex_o < vertex_i, else move left
+                else:  # The vertices are in the same column
+                    direction = 'd' if row_o < row_i else 'u'  # Move down if vertex_o < vertex_i, else move up
+                # Rotate the turtle to the determined direction
+                tile.rotate_turtle(direction)
+                # Draw the turtle on the tile
+                tile.change_turtle_state(erase=False)
+
 
 if __name__ == '__main__':
     maze = Labyrinth(2, 3)
     maze.get_board()
-    maze.window.after(5000, maze.update_maze)
+    maze.window.after(1000, maze.update_maze)
+    maze.window.after(5000, maze.solve_maze)
     maze.window.mainloop()

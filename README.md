@@ -1,6 +1,4 @@
-# README
-
-## Labyrinth Project
+# Maze Project
 
 This project is a Python application that creates and updates a labyrinth based on the information in a JSON file. The
 labyrinth is represented as a grid of tiles, and each tile can have walls on its borders. The labyrinth is drawn using

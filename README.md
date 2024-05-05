@@ -1,61 +1,77 @@
-# Turtle Maze
+# README
 
-This Python project generates a grid-based maze and places a turtle at the start. The turtle can navigate through the maze, with its movements visualized on a Tkinter GUI.
+## Labyrinth Project
 
-## Features
+This project is a Python application that creates and updates a labyrinth based on the information in a JSON file. The labyrinth is represented as a grid of tiles, and each tile can have walls on its borders. The labyrinth is drawn using the Tkinter library.
 
-- Maze generation with customizable grid size.
-- Turtle navigation through the maze.
-- Graphical User Interface (GUI) built with Tkinter for easy interaction and visualization.
-- Border visualization updates as the turtle moves through the maze.
+## Dependencies
 
-## Installation
+- Python 3.6 or higher
+- Tkinter
 
-To use this project, make sure you have Python installed. Then, follow these steps:
+## How to Use
 
-1. Clone the repository:
+### Labyrinth Class
 
-    ```
-    git clone https://github.com/DnelZpt/TurtleMaze.git
-    ```
+The `Labyrinth` class is used to create and update the labyrinth. Here's how to use it:
 
-2. Navigate to the project directory:
+1. Initialize a new instance of the `Labyrinth` class. The constructor takes two arguments: the number of rows and the number of columns in the labyrinth.
 
-    ```
-    cd TurtleMaze
-    ```
+```python
+maze = Labyrinth(2, 3)
+```
 
-## Usage
+2. Generate the board for the labyrinth by calling the `get_board` method. This method creates a list of `Tile` objects, one for each cell in the labyrinth, and draws each tile on the canvas.
 
-Once installed, you can run the project by executing the `front_end.py` file:
+```python
+maze.get_board()
+```
 
-   ```
-   python3 front_end.py
-   ```
+3. Update the labyrinth based on the information in a JSON file by calling the `update_maze` method. This method reads a JSON file located at '/dev/shm/graph.json', loads the JSON data into a dictionary, and checks the walls in the maze based on this data. If the file does not exist, it prints a message indicating this. After checking the walls, the method schedules itself to be called again after 300 milliseconds. This allows the maze to be updated in real time as the JSON file changes.
 
-This will launch the GUI application. From there, you can generate new labyrinths or solve the current one using the provided options.
+```python
+maze.window.after(5000, maze.update_maze)
+```
 
-## Contributing
+4. Start the Tkinter event loop by calling the `mainloop` method on the `window` attribute. This method will keep the window open until it is closed by the user.
 
-Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
+```python
+maze.window.mainloop()
+```
 
-1. Fork the repository.
-2. Create your feature branch (`git checkout -b feature/your-feature`).
-3. Commit your changes (`git commit -am 'Add some feature'`).
-4. Push to the branch (`git push origin feature/your-feature`).
-5. Create a new Pull Request.
+### JSON File
 
-## License
+The JSON file should be located at '/dev/shm/graph.json' and should have the following structure:
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```json
+{
+    "V": {
+        "0": ["1", "3"],
+        "1": ["0", "2"],
+        "2": ["1"],
+        "3": ["0"]
+    },
+    "E": {
+        "(0, 1)": 0,
+        "(0, 3)": 1,
+        "(1, 0)": 0,
+        "(1, 2)": 1,
+        "(2, 1)": 1,
+        "(3, 0)": 1
+    }
+}
+```
 
+In this JSON file, `"V"` is a dictionary that represents the vertices in the labyrinth. Each key is a vertex, and the value is a list of vertices that are connected to the key vertex.
 
+`"E"` is a dictionary that represents the edges in the labyrinth. Each key is a string representation of a tuple that contains two vertices, and the value is an integer that represents the state of the wall between the two vertices. If the value is 0, there is a wall between the vertices. If the value is 1, there is no wall between the vertices.
 
-## Authors
-- [German Holguin](https://github.com/gholguin)
-- [Daniel Zapata](https://github.com/DnelZpt) 
+## Running the Application
 
-## Contact
+To run the application, navigate to the project directory and run the `labyrinth.py` file:
 
-If you have any questions or suggestions, feel free to contact.
+```bash
+python labyrinth.py
+```
 
+This will open a new window that displays the labyrinth. The labyrinth will be updated in real time as the JSON file changes.

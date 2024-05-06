@@ -9,7 +9,8 @@ if __name__ == '__main__':
     grafo.add_edge(2, 5, 0)
     grafo.add_edge(3, 4, 1)
     grafo.add_edge(4, 5, 1)
-    grafo.add_edge(1, 0, 0)
+
     print(grafo)
-    grafo.save_graph('/dev/shm/graph.json')
+    # grafo.save_graph('/dev/shm/graph.json')
+    grafo.save_graph(r'C:\Users\German Andres\Desktop\grafo.json')
 

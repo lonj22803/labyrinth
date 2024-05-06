@@ -1,6 +1,4 @@
-import time
-from grafo import Grafo
-from random import randint
+
 from labyrinth import Labyrinth
 import threading
 from worker import trabajador
@@ -8,7 +6,10 @@ from worker import trabajador
 # Macro expansions -sort of
 ROWS = 10
 COLUMNS = 20
-RUTA = '/dev/shm/graph.json'
+# windows path
+RUTA = r'C:\Users\German Andres\Desktop\grafo.json'
+# Linux path
+# RUTA = '\dev\shm\grafo.json'
 
 
 def create_labyrinth():

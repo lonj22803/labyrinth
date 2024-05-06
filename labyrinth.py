@@ -11,7 +11,7 @@ import json
 
 
 class Labyrinth:
-    def __init__(self, rows: int, columns: int):
+    def __init__(self, rows: int, columns: int, path='./'):
         """
         Initialize a new instance of the Labyrinth class.
 
@@ -21,6 +21,7 @@ class Labyrinth:
         :param rows: (int) The number of rows in the labyrinth.
         :param columns: (int) The number of columns in the labyrinth.
         """
+        self.path = path
         self.list_tiles = list()
         self.rows, self.columns = rows, columns
         # Create a 2D array to store the tiles (not a definitive feature. Could be deleted)
@@ -31,6 +32,11 @@ class Labyrinth:
         self.window.title("Maze")
         self.window.configure(bg='dark gray')
         self._create_canvas()
+        self.get_board()
+        self.window.after(10, self.update_maze)
+
+    def start(self):
+        self.window.mainloop()
 
     def _create_canvas(self):
         """
@@ -88,7 +94,7 @@ class Labyrinth:
         win_sz = f"{width}x{height}"  # Format the window size as a string in the format "widthxheight"
         return win_sz
 
-    def update_maze(self):
+    def update_maze(self, imprimir=True):
         """
         Update the maze based on the information in a JSON file.
 
@@ -101,18 +107,22 @@ class Labyrinth:
 
         :return: None
         """
-        # read json file, if it does not exist, do nothing
-        if os.path.exists('/dev/shm/graph.json'):
-            with open('/dev/shm/graph.json', 'r') as f:
-                graph = json.load(f)
-            print(graph)
-            self._check_walls(graph)
-            f.close()
-            os.remove('/dev/shm/graph.json')
-        else:
-            print("The structure graph does not exist.")
 
-        self.canvas.after(200, self.update_maze)
+        # read json file, if it does not exist, do nothing
+        if os.path.exists(self.path):
+            with open(self.path, 'r') as f:
+                graph = json.load(f)
+            f.close()
+            os.remove(self.path)
+            imprimir = True
+            print('The graph structure has been updated.')
+            self._check_walls(graph)
+            self._mark_turtle(graph['turtle'])
+        if imprimir:
+            print("Nothing to update.")
+            imprimir = False
+
+        self.canvas.after(50, self.update_maze, imprimir)
 
     def _check_walls(self, graph: dict):
         vertex_list = graph['V']
@@ -166,32 +176,7 @@ class Labyrinth:
         index = row * self.columns + column
         return self.list_tiles[index]
 
-    def solve_maze(self):
-        """
-        Solve the maze based on the information in a JSON file.
-
-        This method reads a JSON file located at '/dev/shm/sol_graph.json'.
-        If the file exists, it loads the JSON data into a dictionary and checks the solution path in the
-        maze based on this data. If the file does not exist, it prints a message indicating this.
-
-        After checking the solution path, the method schedules itself to be called again after 300 milliseconds.
-        :return: None
-        """
-        # read json file, if it does not exist, do nothing
-        if os.path.exists('/dev/shm/sol_graph.json'):
-            with open('/dev/shm/sol_graph.json', 'r') as f:
-                sol_graph = json.load(f)
-            print(sol_graph)
-            self._mark_path(sol_graph)
-
-            f.close()
-            os.remove('/dev/shm/sol_graph.json')
-        else:
-            print("Solution file does not exist.")
-
-        self.canvas.after(200, self.solve_maze)
-
-    def _mark_path(self, sol_graph: dict):
+    def _mark_turtle(self, turtle_positions: dict):
         """
         Mark the solution path in the labyrinth.
 
@@ -200,11 +185,14 @@ class Labyrinth:
         at the position of the first vertex, determines the direction of the turtle based on the relative positions of
         the vertices, rotates the turtle to the determined direction, and then draws the turtle on the tile.
 
-        :param sol_graph: (dict) The solution graph, where each key-value pair represents a step in the solution path.
+        :param turtle_positions:
         :return: None
         """
-        for vertex_o in sol_graph:
-            vertex_i = sol_graph[vertex_o]
+
+        for tile in self.list_tiles:
+            tile.change_turtle_state(erase=True)
+
+        for vertex_o, vertex_i in turtle_positions.items():
             print(f"Path: {vertex_o} -> {vertex_i}")
             # Calculate the row and column positions of the vertices
             if vertex_i == 'f':
@@ -231,8 +219,5 @@ class Labyrinth:
 
 
 if __name__ == '__main__':
-    maze = Labyrinth(2, 3)
-    maze.get_board()
-    maze.window.after(1000, maze.update_maze)
-    maze.window.after(5000, maze.solve_maze)
-    maze.window.mainloop()
+    maze = Labyrinth(10, 20, path='/dev/shm/graph.json')
+    maze.start()

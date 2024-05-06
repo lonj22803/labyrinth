@@ -161,7 +161,7 @@ changes.
 
 To run the example graph and solution, run the `graph_example.py` file in a different terminal window:
 ```bash 
-python graph_example.py
+python grafo.py
 ```
 
 Both the `labyrinth.py` and `graph_example.py` files should be running at the same time to see the labyrinth update and 

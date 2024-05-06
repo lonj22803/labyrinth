@@ -30,6 +30,10 @@ class Grafo:
         """
         return f'Vertices: {self.V}\nEdges: {self.E}\nTurtle: {self.turtle}'
 
+    def get_graph(self):
+        grafo_g = {'V': self.V, 'E': self.E, 'turtle': self.turtle}
+        return grafo_g
+
     def save_graph(self, path: str):
         """
         Save the graph as a json file_graph

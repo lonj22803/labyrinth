@@ -8,6 +8,7 @@ from tiles import Tile
 import tkinter as tk
 import os
 import json
+from globales import candado
 
 
 class Labyrinth:
@@ -110,10 +111,11 @@ class Labyrinth:
 
         # read json file, if it does not exist, do nothing
         if os.path.exists(self.path):
-            with open(self.path, 'r') as f:
-                graph = json.load(f)
-            f.close()
-            os.remove(self.path)
+            with candado:
+                with open(self.path, 'r') as f:
+                    graph = json.load(f)
+                f.close()
+                os.remove(self.path)
             imprimir = True
             print('The graph structure has been updated.')
             self._check_walls(graph)
@@ -122,7 +124,7 @@ class Labyrinth:
             print("Nothing to update.")
             imprimir = False
 
-        self.canvas.after(50, self.update_maze, imprimir)
+        self.canvas.after(20, self.update_maze, imprimir)
 
     def _check_walls(self, graph: dict):
         vertex_list = graph['V']
@@ -219,5 +221,5 @@ class Labyrinth:
 
 
 if __name__ == '__main__':
-    maze = Labyrinth(10, 20, path='/dev/shm/graph.json')
+    maze = Labyrinth(2, 3, path='/dev/shm/graph.json')
     maze.start()

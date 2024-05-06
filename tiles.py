@@ -145,22 +145,28 @@ class Tile:
         :return: tuple: A tuple containing the initial and final coordinates (x_init, y_init, x_final, y_final) of the
         border line.
         """
+        offset_x = 0
+        offset_y = 0
+        if self.position[0] == 0:
+            offset_x = self.border_width // 2
+        if self.position[1] == 0:
+            offset_y = self.border_width // 2
 
         if border_id == 0:  # Top border
             x_init = self.position[0]
-            y_init = self.position[1]
-            x_final = x_init + self._length
-            y_final = y_init
+            y_init = self.position[1] + offset_y
+            x_final = self.position[0] + self._length
+            y_final = self.position[1]
         elif border_id == 1:  # Draw bottom border
             x_init = self.position[0]
             y_init = self.position[1] + self._length
             x_final = x_init + self._length
             y_final = y_init
         elif border_id == 2:  # Draw left border
-            x_init = self.position[0]
+            x_init = self.position[0] + offset_x
             y_init = self.position[1]
-            x_final = x_init
-            y_final = y_init + self._length
+            x_final = self.position[0]
+            y_final = self.position[1] + self._length
         else:  # Draw right border
             x_init = self.position[0] + self._length
             y_init = self.position[1]

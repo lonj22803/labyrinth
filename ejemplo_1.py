@@ -10,6 +10,9 @@ if __name__ == '__main__':
     grafo.add_edge(3, 4, 1)
     grafo.add_edge(4, 5, 1)
 
+    # show graph on terminal
     print(grafo)
+
+    # save graph to the comm file. This file is read by tue GUI.
     # grafo.save_graph('/dev/shm/graph.json')
     grafo.save_graph(r'C:\Users\German Andres\Desktop\grafo.json')

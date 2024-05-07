@@ -1,3 +1,12 @@
+"""
+This is an example of multi-threading execution
+Front-end and Back-end modules are running in different threads
+Inter-thread comm is implemented with a Queue and a mutex lock
+
+Damiel Zapata Y.
+German A Holguin L.
+UTP - Pereira, Colombia 2024.
+"""
 
 from labyrinth import Labyrinth
 import threading

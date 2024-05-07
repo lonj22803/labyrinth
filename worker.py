@@ -1,3 +1,11 @@
+"""
+Implementation of worker example. In this case, random walls are generated.
+
+Damiel Zapata Y.
+German A Holguin L.
+UTP - Pereira, Colombia 2024.
+"""
+
 import time
 from globales import candado
 from grafo import Grafo
@@ -5,6 +13,14 @@ from random import randint
 
 
 def trabajador(rows, columns, ruta=''):
+    """
+    function to create several random graphs with random walls in the Labyrinth.
+    :param rows: Number of rows to create
+    :param columns: Number os columns to create
+    :param ruta: Path to the shared file that loads a graph from SSD.
+    :return : None
+    """
+
     done = False
     reps = 0
     while not done and reps < 50:

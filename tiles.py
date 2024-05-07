@@ -12,8 +12,7 @@ This module is part of a labyrinth project. The project is implemented in Python
 
 Daniel Zapata Y.
 German A Holguin L.
-
-2024
+UTP - Pereira, Colombia 2024
 """
 
 import tkinter as tk

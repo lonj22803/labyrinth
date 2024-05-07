@@ -8,11 +8,11 @@ from tiles import Tile
 import tkinter as tk
 import os
 import json
-from globales import candado
+from globales import candado, cola
 
 
 class Labyrinth:
-    def __init__(self, rows: int, columns: int, path='./'):
+    def __init__(self, rows: int, columns: int, path=''):
         """
         Initialize a new instance of the Labyrinth class.
 
@@ -109,17 +109,26 @@ class Labyrinth:
         :return: None
         """
 
-        # read json file, if it does not exist, do nothing
-        if os.path.exists(self.path):
+        # First check the pipe, if there's nothing there, check the file.
+        if not cola.empty():
             with candado:
-                with open(self.path, 'r') as f:
-                    graph = json.load(f)
-                f.close()
-                os.remove(self.path)
+                graph = cola.get()
             imprimir = True
-            print('The graph structure has been updated.')
+            print('The graph structure has been updated from Queue.')
             self._check_walls(graph)
             self._mark_turtle(graph['turtle'])
+        else:
+            # read json file, if it does not exist, do nothing
+            if os.path.exists(self.path):
+                with candado:
+                    with open(self.path, 'r') as f:
+                        graph = json.load(f)
+                    f.close()
+                    os.remove(self.path)
+                imprimir = True
+                print('The graph structure has been updated from file.')
+                self._check_walls(graph)
+                self._mark_turtle(graph['turtle'])
         if imprimir:
             print("Nothing to update.")
             imprimir = False
@@ -221,8 +230,6 @@ class Labyrinth:
 
 
 if __name__ == '__main__':
-    # linux
-    # maze = Labyrinth(2, 3, path='/dev/shm/graph.json')
-    # windwos
-    maze = Labyrinth(2, 3, path=r'C:\Users\German Andres\Desktop\grafo.json')
+    # maze = Labyrinth(2, 3, path='/dev/shm/graph.json') # linux
+    maze = Labyrinth(2, 3, path=r'C:\Users\German Andres\Desktop\grafo.json')  # windwos
     maze.start()

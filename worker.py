@@ -4,10 +4,10 @@ from grafo import Grafo
 from random import randint
 
 
-def trabajador(rows, columns, ruta):
+def trabajador(rows, columns, ruta=''):
     done = False
     reps = 0
-    while not done and reps < 500:
+    while not done and reps < 50:
         grafo = Grafo()
         # Create a graph of 10 by 20 vertices with random edges
         for i in range(rows * columns):
@@ -21,6 +21,7 @@ def trabajador(rows, columns, ruta):
             if vertex_i < rows * columns:
                 grafo.add_edge(vertex_o, vertex_i, randint(0, 1))
         with candado:
-            grafo.save_graph(ruta)
-        time.sleep(0.02)
+            # grafo.save_graph(ruta)
+            grafo.send_graph()
+        time.sleep(1)
         reps += 1

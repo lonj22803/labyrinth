@@ -3,7 +3,7 @@ Minimum example creating a labyrinth. In this case, the graph was created by han
 """
 
 import json
-
+from globales import cola
 
 class Grafo:
     """
@@ -34,11 +34,15 @@ class Grafo:
         grafo_g = {'V': self.V, 'E': self.E, 'turtle': self.turtle}
         return grafo_g
 
+    def send_graph(self):
+        grafo_g = self.get_graph()
+        cola.put(grafo_g)
+
     def save_graph(self, path: str):
         """
         Save the graph as a json file_graph
         """
-        grafo_g = {'V': self.V, 'E': self.E, 'turtle': self.turtle}
+        grafo_g = self.get_graph()
         with open(path, 'w') as file_graph:
             json.dump(grafo_g, file_graph, indent=4)
         # Close the file_graph

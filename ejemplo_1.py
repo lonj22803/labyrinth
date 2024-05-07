@@ -13,4 +13,3 @@ if __name__ == '__main__':
     print(grafo)
     # grafo.save_graph('/dev/shm/graph.json')
     grafo.save_graph(r'C:\Users\German Andres\Desktop\grafo.json')
-

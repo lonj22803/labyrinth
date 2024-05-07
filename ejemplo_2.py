@@ -6,19 +6,15 @@ from worker import trabajador
 # Macro expansions -sort of
 ROWS = 10
 COLUMNS = 20
-# windows path
-RUTA = r'C:\Users\German Andres\Desktop\grafo.json'
-# Linux path
-# RUTA = '\dev\shm\grafo.json'
 
 
 def create_labyrinth():
-    maze = Labyrinth(ROWS, COLUMNS, path=RUTA)
+    maze = Labyrinth(ROWS, COLUMNS)
     maze.start()
 
 
 def create_graph():
-    trabajador(ROWS, COLUMNS, RUTA)
+    trabajador(ROWS, COLUMNS)
 
 
 if __name__ == '__main__':

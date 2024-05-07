@@ -19,6 +19,57 @@ import tkinter as tk
 
 
 class Tile:
+    """
+    The Tile class includes methods for initializing the tile, drawing the tile and its borders, updating the visualization
+    of a border, calculating the coordinates for borders, rotating the turtle, drawing the turtle, and changing the state
+    of the turtle on the tile.
+
+    Attributes:
+    ----------
+    border_width : int
+        The width of the borders of the tile.
+    canvas : tk.Canvas
+        The tkinter Canvas on which the tile will be drawn.
+    position : tuple
+        The position of the top-left corner of the tile.
+    _length : int
+        The length of the sides of the tile.
+    borders : list
+        A list of booleans representing whether each border exists.
+    borders_ID : list
+        A list to store the ID of the borders on the canvas.
+    turtle_ID : int
+        The ID of the turtle on the canvas.
+    turtle : bool
+        If True, draw a turtle in the current tile to simulate the player move.
+    turtle_orientation : str
+        The orientation of the turtle: 'r' for right, 'l' for left, 'u' for up, 'd' for down.
+    turtle_image : tk.PhotoImage
+        A PhotoImage object created from the turtle image file.
+    bg_ID : int
+        The ID of the background on the canvas.
+
+    Methods:
+    -------
+    __init__(self, sketch: tk.Canvas, pos_x=0, pos_y=0, length=100, width=2):
+        Initializes a Tile object.
+    _get_turtle_image(self):
+        Selects an appropriate image size for the turtle based on the size of the canvas.
+    draw(self, bg='lightblue', turtle=False):
+        Draws the tile on the canvas.
+    _draw_border(self, border_id: int):
+        Draws a border on the tile based on the given border_id.
+    update_border_visualization(self, border_id: int, state: bool):
+        Updates the visualization of a border in the canvas.
+    _get_line_coords(self, border_id: int):
+        Calculates the coordinates for borders of a given tile.
+    rotate_turtle(self, direction: str):
+        Rotates the turtle based on the given direction.
+    _draw_turtle(self):
+        Draws a turtle on the tile.
+    change_turtle_state(self, erase=True):
+        Changes the state of the turtle on the tile.
+    """
     def __init__(self, sketch: tk.Canvas, pos_x=0, pos_y=0, length=100, width=2):
         """
         Initializes a Tile object.

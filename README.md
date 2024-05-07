@@ -1,19 +1,25 @@
-# Maze Project
+# Labyrinth Project
 
-This project is a Python application that creates and updates a labyrinth based on the information in a JSON file. The
-labyrinth is represented as a grid of tiles, and each tile can have walls on its borders. The labyrinth is drawn using
-the Tkinter library.
+This project is a Python application that creates a labyrinth and a graph representation of the labyrinth using
+multi-threading. The labyrinth is represented as a grid of tiles, and each tile can have walls on its borders.
+The labyrinth is drawn using the Tkinter library.
 
 ## Dependencies
 
 - Python 3.6 or higher
 - Tkinter
 
-## Files
+## Modules
 
+- `tiles.py`: Contains the `Tile` class which is used to create a tile in the labyrinth.
 - `labyrinth.py`: Contains the `Labyrinth` class which is used to create and solve the labyrinth.
-- `tiles.py`: Contains the `Tile` class which is used to represent each tile in the labyrinth.
-- `graph_example.py`: Contains an example graph and a solution for the graph.
+- `grafo.py`: Contains the `Grafo` class which is used to create a graph representation of a labyrinth.
+- `globales.py`: Contains global variables that are used for thread synchronization and inter-thread communication.
+- `worker.py`: Contains the `Worker` function which is used to simulate different random graphs.
+- `ejemplo_1.py`: This module uses the `Grafo` class to create a graph representation of a labyrinth and saves it as a
+  JSON file.
+- `ejemplo_2.py`: An example of multi-threading execution where Front-end and Back-end modules are running in different
+  threads. Inter-thread communication is implemented with a Queue and a mutex lock.
 
 ## How to Use
 
@@ -21,153 +27,180 @@ the Tkinter library.
 
 The `Labyrinth` class is used to create and update the labyrinth GUI. Here's how to use it:
 
-1. Initialize a new instance of the `Labyrinth` class. The constructor takes two arguments: the number of rows and the
-   number of columns in the labyrinth.
+1. Initialize a new instance of the `Labyrinth` class. The constructor takes three arguments: the number of rows,
+   the number of columns in the labyrinth, and the path to the JSON file that contains the graph representation of the
+   labyrinth.
 
 ```python
-maze = Labyrinth(2, 3)
+maze = Labyrinth(3, 5, path='/dev/shm/graph.json')
 ```
 
-2. Generate the board for the labyrinth by calling the `get_board` method. This method creates a list of `Tile` objects,
-   one for each cell in the labyrinth, and draws each tile on the canvas.
+2. Start the Tkinter event loop by calling the `start` method. This method will keep the window open until it is closed
+   by the user.
 
 ```python
-maze.get_board()
+maze.start()
 ```
+
+3. The `Labyrinth` class also interacts with a queue object from the `globales` module for inter-thread communication.
+   The `Labyrinth` class reads from the queue to get updates about the labyrinth's state. These updates are produced by
+   another thread that simulates the labyrinth's changes over time. The queue ensures that these updates are processed
+   in the order they were produced, and it allows the `Labyrinth` class to wait for new updates if none are available.
 
 <p align="center">
   <img src="imgs/empty_board.png" alt="Empty Board">
 </p>
 
-3. Update the labyrinth based on the information in a JSON file by calling the `update_maze` method. This method reads a
-   JSON file located at '/dev/shm/graph.json', loads the JSON data into a dictionary, and checks the walls in the maze
-   based on this data. If the file does not exist, it prints a message indicating this. After checking the walls, the
-   method schedules itself to be called again after 300 milliseconds. This allows the maze to be updated in real time as
-   the JSON file changes.
+
+### Grafo Class
+
+The `Grafo` class in the `grafo.py` module is used to create a graph representation of the labyrinth. Here's how to use 
+it:
+
+1. Import the `Grafo` class from the `grafo` module.
 
 ```python
-maze.window.after(1000, maze.update_maze)
+from grafo import Grafo
 ```
+
+2. Initialize a new instance of the `Grafo` class. The constructor takes three arguments: a dictionary representing the 
+adjacency list of vertices, a dictionary representing the adjacency list of weighted edges, and a dictionary representing 
+the turtle's position and direction.
+
+```python
+vertex_list = {0: [1, 3], 1: [0, 2, 4], 2: [1, 5], 3: [0, 4], 4: [1, 3, 5], 5: [2, 4]}
+edges_list = {'(0, 1)': 1, '(0, 3)': 0, '(1, 2)': 0, '(1, 4)': 1, '(2, 5)': 0, '(3, 4)': 1, '(4, 5)': 1}
+turtle_list = {0: 1, 1: 4, 4: 5, 5: 'f'}
+grafo = Grafo(vertex_list, edges_list, turtle_list)
+```
+
+#### Vertices Labeling
+
+In the labyrinth, each vertex (tile) is labeled with a unique number from `0` to the total number of tiles minus `1`. 
+The labeling follows a row-major order, which means that the tiles are labeled row by row, from left to right and 
+top to bottom.
+
+For example, consider a 2x3 labyrinth. The tiles would be labeled as follows:
+
+```
+0 1 2
+3 4 5
+```
+
+In this example, the tile in the `top left corner` is labeled `0`, the tile to its right is labeled 1, and so on. 
+The tile in the `bottom right corner` is labeled `5`.
+
+This labeling system is used to represent the labyrinth as a graph, where each tile corresponds to a vertex in the 
+graph. The adjacency between tiles (whether two tiles are next to each other) is represented as edges in the graph.
+
 <p align="center">
-  <img src="imgs/empty_maze.png" alt="Empty Maze">
+  <img src="imgs/board_labels.png" alt="Vertices Labeling">
 </p>
 
-4. Solve the labyrinth based on the information in a JSON file located at '/dev/shm/sol_graph.json'. This file should
-   contain a dictionary where each key-value pair represents a step in the solution path.
+The image above illustrates the tile labeling system for a larger labyrinth. As you can see, the labels start at 0 
+in the top left corner and increase by 1 for each tile to the right and down, following the row-major order.
+
+3. Add an edge to the graph using the `add_edge` method. This method takes three arguments: the two vertices that the 
+edge connects and the weight of the edge. A weight of 1 represents a path between two rooms, and a weight of 0 
+represents a wall.
 
 ```python
-maze.window.after(5000, maze.solve_maze)
+grafo.add_edge(0, 1, 1)  # Add a path between rooms 0 and 1
+grafo.add_edge(1, 2, 0)  # Add a wall between rooms 1 and 2
 ```
 
-<p align="center">
-  <img src="imgs/solution_maze.png" alt="Solved Maze">
-</p>
-
-5. Start the Tkinter event loop by calling the `mainloop` method on the `window` attribute. This method will keep the
-   window open until it is closed by the user.
+4. Send the graph to the Queue using the `send_graph` method. This method gets the graph and puts it into the global 
+queue 'cola'. This can be used to share the graph between different parts of the program or with different threads.
 
 ```python
-maze.window.mainloop()
+grafo.send_graph()
 ```
 
-## Example Graphs
+5. Save the graph as a JSON file using the `save_graph` method. This method takes one argument: the path to the JSON 
+   file.
 
-The `graph_example.py` file contains an example graph and a solution for the graph. The graph is represented as a
-dictionary where each key-value pair represents a wall in the labyrinth. The solution is represented as a dictionary
-where each key-value pair represents a step in the solution path.
+```python
+grafo.save_graph('/dev/shm/graph.json')
+```
 
-To use the example graph and solution, run the `graph_example.py` file before running the `labyrinth.py` file.
-The `graph_example.py` file will create two JSON files in '/dev/shm': 'graph.json' and 'sol_graph.json'. These files
-will be used by the `Labyrinth` class to update and solve the labyrinth.
+This will create a JSON file that represents the labyrinth as a graph. The JSON file will contain the adjacency list of
+vertices, the adjacency list of weighted edges, and the turtle's position and direction.
 
-## JSON Files
 
-### Graph Structure JSON File
-
-The JSON file should be located at '/dev/shm/graph.json' and should have the following structure:
+For the example above, the JSON file would look like this:
 
 ```json
 {
-  "V": {
-    "0": [
-      "1",
-      "3"
-    ],
-    "1": [
-      "0",
-      "2"
-    ],
-    "2": [
-      "1"
-    ],
-    "3": [
-      "0"
-    ]
+  "vertex_list": {
+    "0": [1, 3],
+    "1": [0, 2, 4],
+    "2": [1, 5],
+    "3": [0, 4],
+    "4": [1, 3, 5],
+    "5": [2, 4]
   },
-  "E": {
-    "(0, 1)": 0,
-    "(0, 3)": 1,
-    "(1, 0)": 0,
-    "(1, 2)": 1,
-    "(2, 1)": 1,
-    "(3, 0)": 1
+  "edges_list": {
+    "(0, 1)": 1,
+    "(0, 3)": 0,
+    "(1, 2)": 0,
+    "(1, 4)": 1,
+    "(2, 5)": 0,
+    "(3, 4)": 1,
+    "(4, 5)": 1
+  },
+  "turtle_list": {
+    "0": 1,
+    "1": 4,
+    "4": 5,
+    "5": "f"
   }
 }
 ```
-
-In this JSON file, `"V"` is a dictionary that represents the vertices in the labyrinth. Each key is a vertex, and the
-value is a list of vertices that are connected to the key vertex.
-
-`"E"` is a dictionary that represents the edges in the labyrinth. Each key is a string representation of a tuple that
-contains two vertices, and the value is an integer that represents the state of the wall between the two vertices. If
-the value is `0`, there is a wall between the vertices. If the value is `1`, there is no wall between the vertices.
-
-Every vertex in the labyrinth represents the label of the tile in the labyrinth. The vertices are numbered from 0 to n-1
-where n is the number of vertices in the labyrinth.
-
+And the labyrinth would look like this:
 <p align="center">
-  <img src="imgs/board_idx.png" alt="Graph">
+  <img src="imgs/updated_maze.png" alt="Updated Maze">
 </p>
 
-### Solution Path JSON File
 
-The JSON file should be located at '/dev/shm/sol_graph.json' and should have the following structure:
+### Globales Module
 
-```json
-{
-  "0": "1",
-  "1": "4",
-  "4": "5",
-  "5": "f"
-}
+This module contains global variables that are used for thread synchronization and inter-thread communication. It uses
+Python's built-in threading and queue modules to create a lock object and a queue object. The lock object, `candado`, is
+used to ensure that only one thread can execute a particular section of code at a time, which is useful for preventing
+race conditions. The queue object, `cola`, is used for inter-thread communication, where one thread can put messages (or
+any Python data type) into the queue, and another thread can retrieve them.
+
+
+### Ejemplo_1 Module
+
+This module creates a graph representation of a labyrinth and saves it as a JSON file. The graph is created by adding
+vertices (rooms in the labyrinth) and edges (paths between the rooms). The weight of an edge determines whether there is
+a path between two rooms (weight 1) or a wall (weight 0).
+
+To run this module, first run the `labyrinth.py` module to launch the GUI that displays the labyrinth:
+```bash
+python3 labyrinth.py
 ```
 
-The solution path JSON file should contain a dictionary where each key-value pair represents a directed edge in the
-path.
-The key is the starting vertex of the edge, and the value is the ending vertex of the edge. The last vertex in the path
-should
-have a value of "f" to indicate the end of the path.
+Then, navigate to the project directory and run the `ejemplo_1.py` file in a separate terminal window:
+```bash
+python3 ejemplo_1.py
+```
 
-## Running the Application
 
-To run the application, navigate to the project directory and run the `labyrinth.py` file:
+### Ejemplo_2 Module
+
+This module demonstrates how to use multi-threading to run the Front-end and Back-end modules in different threads.
+Inter-thread communication is implemented with a Queue and a mutex lock.
+
+To run this module, navigate to the project directory and run the `ejemplo_2.py` file:
 
 ```bash
-python labyrinth.py
+python3 ejemplo_2.py
 ```
 
-This will open a new window that displays the labyrinth. The labyrinth will be updated in real time as the JSON file
-changes.
 
-To run the example graph and solution, run the `graph_example.py` file in a different terminal window:
-```bash 
-python grafo.py
-```
-
-Both the `labyrinth.py` and `graph_example.py` files should be running at the same time to see the labyrinth update and 
-solve in real time.
 
 ## License
+
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-

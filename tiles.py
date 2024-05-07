@@ -1,5 +1,17 @@
 """
-Module to define the Tile class used as basic unit into the labyrinth
+This module defines the Tile class which is used as the basic unit in a labyrinth. Each Tile represents a square in the
+labyrinth and has properties such as its position, size, and whether it has borders on each of its sides.
+
+The Tile class also includes methods for drawing the tile on a tkinter Canvas, including its borders and a turtle image
+that can be used to represent a player's position. The turtle's orientation can be changed, and it can be drawn or
+erased from the tile.
+
+The module includes a main section that creates a tkinter window and canvas, and draws a single tile on the canvas.
+
+This module is part of a labyrinth project. The project is implemented in Python using the tkinter library for the GUI.
+
+Daniel Zapata Y.
+German A Holguin L.
 
 2024
 """
@@ -9,18 +21,27 @@ import tkinter as tk
 
 class Tile:
     def __init__(self, sketch: tk.Canvas, pos_x=0, pos_y=0, length=100, width=2):
-        self.border_width = width
-        self.canvas = sketch
-        self.position = (pos_x, pos_y)
-        self._length = length
+        """
+        Initializes a Tile object.
+
+        :param sketch: (tk.Canvas) The tkinter Canvas on which the tile will be drawn.
+        :param pos_x: (int) The x-coordinate of the top-left corner of the tile. Default is 0.
+        :param pos_y: (int) The y-coordinate of the top-left corner of the tile. Default is 0.
+        :param length: (int) The length of the sides of the tile. Default is 100.
+        :param width: (int) The width of the borders of the tile. Default is 2.
+        """
+        self.border_width = width  # Width of the borders
+        self.canvas = sketch  # Canvas where the tile will be drawn
+        self.position = (pos_x, pos_y)  # Position of the top-left corner of the tile
+        self._length = length  # Length of the sides of the tile
         # Represent borders as: [Top, bottom, left, right]
         self.borders = [True, True, True, True]
-        self.borders_ID = [None, None, None, None]
-        self.turtle_ID = None
+        self.borders_ID = [None, None, None, None]  # Store the ID of the borders on the canvas
+        self.turtle_ID = None  # Store the ID of the turtle on the canvas
         self.turtle = False  # If True, draw a turtle in the current tile to simulate de player move
         self.turtle_orientation = 'u'  # Define turtle orientation: r: right, l: left, u: up, d: down
         self.turtle_image = self._get_turtle_image()  # Image as instance attribute to avoid python garbage collection
-        self.bg_ID = None
+        self.bg_ID = None  # Store the ID of the background on the canvas
 
     def _get_turtle_image(self):
         """
@@ -145,27 +166,20 @@ class Tile:
         :return: tuple: A tuple containing the initial and final coordinates (x_init, y_init, x_final, y_final) of the
         border line.
         """
-        offset_x = 0
-        offset_y = 0
-        if self.position[0] == 0:
-            offset_x = self.border_width
-        if self.position[1] == 0:
-            offset_y = self.border_width
-
         if border_id == 0:  # Top border
             x_init = self.position[0]
-            y_init = self.position[1] + offset_y
+            y_init = self.position[1]
             x_final = self.position[0] + self._length
-            y_final = self.position[1] + offset_y
+            y_final = self.position[1]
         elif border_id == 1:  # Draw bottom border
             x_init = self.position[0]
             y_init = self.position[1] + self._length
             x_final = x_init + self._length
             y_final = y_init
         elif border_id == 2:  # Draw left border
-            x_init = self.position[0] + offset_x
+            x_init = self.position[0]
             y_init = self.position[1]
-            x_final = self.position[0] + offset_x
+            x_final = self.position[0]
             y_final = self.position[1] + self._length
         else:  # Draw right border
             x_init = self.position[0] + self._length

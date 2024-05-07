@@ -61,7 +61,9 @@ class Labyrinth:
         """
         for i in range(self.rows):
             for j in range(self.columns):
-                tile_mn = Tile(self.canvas, j * self.tile_length, i * self.tile_length, length=self.tile_length)
+                tile_pos_x = j * self.tile_length + 20  # Add 20 pixels to the x position for the window border
+                tile_pos_y = i * self.tile_length + 20  # Add 20 pixels to the y position for the window border
+                tile_mn = Tile(self.canvas, tile_pos_x, tile_pos_y, length=self.tile_length)
                 self.tile_array[i][j] = tile_mn  # This still is a possible feature (could be deleted)
                 self.list_tiles.append(tile_mn)
                 tile_mn.draw()
@@ -77,8 +79,8 @@ class Labyrinth:
 
         :return: (tuple) A tuple containing the width and height of the canvas.
         """
-        height = self.tile_length * self.rows
-        width = self.tile_length * self.columns
+        height = self.tile_length * self.rows + 40  # Add 40 pixels to the height for the window border
+        width = self.tile_length * self.columns + 40  # Add 40 pixels to the width for the window border
         return width, height
 
     def _get_window_sz(self):
@@ -189,13 +191,7 @@ class Labyrinth:
 
     def _mark_turtle(self, turtle_positions: dict):
         """
-        Mark the solution path in the labyrinth.
-
-        This method iterates over the solution graph, which is a dictionary where each key-value pair represents a step
-        in the solution path. For each step, it calculates the row and column positions of the vertices, gets the tile
-        at the position of the first vertex, determines the direction of the turtle based on the relative positions of
-        the vertices, rotates the turtle to the determined direction, and then draws the turtle on the tile.
-
+        Mark the turtle on the labyrinth.
         :param turtle_positions:
         :return: None
         """
@@ -230,6 +226,6 @@ class Labyrinth:
 
 
 if __name__ == '__main__':
-    # maze = Labyrinth(2, 3, path='/dev/shm/graph.json') # linux
-    maze = Labyrinth(2, 3, path=r'C:\Users\German Andres\Desktop\grafo.json')  # windwos
+    maze = Labyrinth(2, 3, path='/dev/shm/graph.json')  # linux
+    # maze = Labyrinth(2, 3, path=r'C:\Users\German Andres\Desktop\grafo.json')  # windows
     maze.start()

@@ -14,5 +14,5 @@ if __name__ == '__main__':
     print(grafo)
 
     # save graph to the comm file. This file is read by tue GUI.
-    # grafo.save_graph('/dev/shm/graph.json')
-    grafo.save_graph(r'C:\Users\German Andres\Desktop\grafo.json')
+    grafo.save_graph('/dev/shm/graph.json')  # For operation in Linux
+    # grafo.save_graph(r'C:\Users\German Andres\Desktop\grafo.json') # For operation in Windows

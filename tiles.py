@@ -148,14 +148,14 @@ class Tile:
         offset_x = 0
         offset_y = 0
         if self.position[0] == 0:
-            offset_x = self.border_width * 2
+            offset_x = self.border_width
         if self.position[1] == 0:
-            offset_y = self.border_width * 2
+            offset_y = self.border_width
 
         if border_id == 0:  # Top border
-            x_init = self.position[0] + offset_x
+            x_init = self.position[0]
             y_init = self.position[1] + offset_y
-            x_final = self.position[0] + self._length + offset_x
+            x_final = self.position[0] + self._length
             y_final = self.position[1] + offset_y
         elif border_id == 1:  # Draw bottom border
             x_init = self.position[0]
@@ -164,9 +164,9 @@ class Tile:
             y_final = y_init
         elif border_id == 2:  # Draw left border
             x_init = self.position[0] + offset_x
-            y_init = self.position[1] + offset_y
+            y_init = self.position[1]
             x_final = self.position[0] + offset_x
-            y_final = self.position[1] + self._length + offset_y
+            y_final = self.position[1] + self._length
         else:  # Draw right border
             x_init = self.position[0] + self._length
             y_init = self.position[1]

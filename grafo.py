@@ -145,7 +145,8 @@ class Grafo:
         """
         # Verify if the edge already exists
         if f"({vertex_o}, {vertex_i})" in self.E or f"({vertex_i}, {vertex_o})" in self.E:
-            print(f"The edge ({vertex_o}, {vertex_i}) already exists.")
+            if __name__ == '__main__':
+                print(f"The edge ({vertex_o}, {vertex_i}) already exists.")
         else:
             # Verify if vertices exist or add them if they are not in the graph
             if vertex_o not in self.V:

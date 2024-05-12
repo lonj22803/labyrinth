@@ -75,6 +75,7 @@ class Labyrinth:
     _mark_turtle(self, turtle_positions: dict):
         Mark the turtle's position and direction on the labyrinth.
     """
+
     def __init__(self, rows: int, columns: int, path=''):
         """
         This method initializes the Labyrinth object with the specified number of rows and columns. It also sets up
@@ -290,7 +291,8 @@ class Labyrinth:
             tile.change_turtle_state(erase=True)
 
         for vertex_o, vertex_i in turtle_positions.items():
-            print(f"Path: {vertex_o} -> {vertex_i}")
+            if __name__ == '__main__':
+                print(f"Path: {vertex_o} -> {vertex_i}")
             # Calculate the row and column positions of the vertices
             if vertex_i == 'f':
                 row_o, col_o = divmod(int(vertex_o), self.columns)

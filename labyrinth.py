@@ -180,7 +180,8 @@ class Labyrinth:
             with candado:
                 graph = cola.get()
             imprimir = True
-            print('The graph structure has been updated from Queue.')
+            if __name__ == '__main__':
+                print('The graph structure has been updated from Queue.')
             self._check_walls(graph)
             self._mark_turtle(graph['turtle'])
 

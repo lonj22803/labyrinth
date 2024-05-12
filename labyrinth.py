@@ -193,7 +193,8 @@ class Labyrinth:
                     f.close()
                     os.remove(self.path)
                 imprimir = True
-                print('The graph structure has been updated from file.')
+                if __name__ == '__main__':
+                    print('The graph structure has been updated from file.')
                 self._check_walls(graph)
                 self._mark_turtle(graph['turtle'])
 

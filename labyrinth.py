@@ -198,10 +198,11 @@ class Labyrinth:
                 self._mark_turtle(graph['turtle'])
 
         if imprimir:
-            print("Nothing to update.")
+            if __name__ == '__main__':
+                print("Nothing to update.")
             imprimir = False
 
-        self.canvas.after(20, self.update_maze, imprimir)
+        self.canvas.after(10, self.update_maze, imprimir)
 
     def _check_walls(self, graph: dict):
         """

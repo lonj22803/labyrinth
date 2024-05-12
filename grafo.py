@@ -22,7 +22,8 @@ UTP - Pereira, Colombia 2024.
 """
 
 import json
-from globales import cola
+from globales import cola, candado
+from copy import deepcopy
 
 
 class Grafo:
@@ -113,7 +114,11 @@ class Grafo:
         :return: None
         """
         grafo_g = self.get_graph()
-        cola.put(grafo_g)
+        with candado:
+            # Put the graph into the global queue 'cola'
+            # The deepcopy function is used to avoid
+            # the Queue storing a reference to the graph to the original graph
+            cola.put(deepcopy(grafo_g))
 
     def save_graph(self, path: str):
         """

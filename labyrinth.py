@@ -346,7 +346,18 @@ class Labyrinth:
         return circle
 
     def _draw_edge(self, start: tuple, end: tuple, color='black'):
-        pass
+        """
+        Draw an edge (line) on the canvas.
+
+        This method creates a line on the canvas from the start point to the end point with the specified color.
+
+        :param start: (tuple) A tuple containing the x and y coordinates of the start point of the line.
+        :param end: (tuple) A tuple containing the x and y coordinates of the end point of the line.
+        :param color: (str) The color of the line. Default is 'black'.
+        :return: (int) The ID of the created line.
+        """
+        line = self.canvas.create_line(start[0], start[1], end[0], end[1], fill=color)
+        return line
 
 
 if __name__ == '__main__':

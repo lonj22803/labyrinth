@@ -177,11 +177,11 @@ if __name__ == '__main__':
     # Create a dictionary with the adjacency list of weighted edges of the graph
     # If edge weight is 0, there is no path between the nodes (a wall exists),
     # if edge weight is 1, there is a path between the nodes (a wall does not exist)
-    edges_list = {'(0, 1)': 1, '(0, 3)': 0, '(1, 2)': 0, '(1, 4)': 1, '(2, 5)': 0, '(3, 4)': 1, '(4, 5)': 1}
+    edges_list = {'(0, 1)': 1, '(0, 3)': 0, '(1, 2)': 0, '(1, 4)': 1, '(2, 5)': 0, '(3, 4)': 1, '(4, 5)': 1, '(4, 2)': 1}
     # List of all vertices to show a turtle (the key) and the turtle's goal (the value)
-    turtle_list = {0: 1, 1: 4, 4: 5, 5: 'f'}  # 'f' is a centinel value to represent turtle's exit
+    turtle_list = {0: 1, 1: 4, 4: 3, 5: 'f'}  # 'f' is a centinel value to represent turtle's exit
     # Create a dictionary with the colors of the vertices
-    colors_list = {0: 'red', 1: 'blue', 2: 'green', 3: 'yellow', 4: 'purple', 5: 'orange'}
+    colors_list = {0: 'red', 1: 'blue', 2: 'green', 4: 'purple', 5: 'orange'}
     # Create a graph
     grafo = Grafo(vertex_list, edges_list, turtle_list, colors_list)
     # Save the graph as a json file

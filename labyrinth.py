@@ -86,8 +86,12 @@ class Labyrinth:
         :param columns: (int) The number of columns in the labyrinth.
         :param path: (str) The path to the JSON file that contains the labyrinth data. Default is an empty string.
         """
+        self.graph = None
         self.path = path  # Path to the JSON file
+
         self.list_tiles = list()  # List to store the tiles
+        self.list_edges = list()  # List to store the edges IDs
+        self.list_nodes = list()  # List to store the nodes IDs
 
         self.rows, self.columns = rows, columns  # Number of rows and columns in the labyrinth
         # Create a 2D array to store the tiles (not a definitive feature. Could be deleted)
@@ -103,6 +107,7 @@ class Labyrinth:
         self._create_canvas()  # Create the canvas for the labyrinth
         self.get_board()  # Generate the board for the labyrinth
         self.window.after(10, self.update_maze)  # Schedule the update_maze method to be called after 10 milliseconds
+        self.draw_graph()
 
     def start(self):
         """
@@ -181,26 +186,28 @@ class Labyrinth:
         # First check the pipe, if there's nothing there, check the file.
         if not cola.empty():
             with candado:
-                graph = cola.get()
+                self.graph = cola.get()
             imprimir = True
             if __name__ == '__main__':
                 print('The graph structure has been updated from Queue.')
-            self._check_walls(graph)
-            self._mark_turtle(graph['turtle'])
+            self._check_walls()
+            self.draw_graph()
+            self._mark_turtle()
 
         else:
             # read json file, if it does not exist, do nothing
             if os.path.exists(self.path):
                 with candado:
                     with open(self.path, 'r') as f:
-                        graph = json.load(f)
+                        self.graph = json.load(f)
                     f.close()
                     os.remove(self.path)
                 imprimir = True
                 if __name__ == '__main__':
                     print('The graph structure has been updated from file.')
-                self._check_walls(graph)
-                self._mark_turtle(graph['turtle'])
+                self._check_walls()
+                self.draw_graph()
+                self._mark_turtle()
 
         if imprimir:
             if __name__ == '__main__':
@@ -209,25 +216,21 @@ class Labyrinth:
 
         self.canvas.after(10, self.update_maze, imprimir)
 
-    def _check_walls(self, graph: dict):
+    def _check_walls(self):
         """
          Check and update the walls of the labyrinth based on the graph structure.
 
          This method iterates over the vertices in the graph. For each pair of vertices, it checks if there is an edge
-         between them in the graph. If there is an edge and its value is 0, it means there is a wall between the vertices
-         in the labyrinth, so it calls the _update_border method to update the border of the tile at the position of the
-         first vertex to exist. If the value of the edge is not 0, it means there is no wall between the vertices in the
-         labyrinth, so it calls the _update_border method to update the border of the tile at the position of the first
-         vertex to not exist.
+         between them in the graph. If there is an edge and its value is 0, it means there is a wall between the
+         vertices in the labyrinth, so it calls the _update_border method to update the border of the tile at the
+         position of the first vertex to exist. If the value of the edge is not 0, it means there is no wall between the
+         vertices in the labyrinth, so it calls the _update_border method to update the border of the tile at the
+         position of the first vertex to not exist.
 
-         :param graph: (dict) The graph structure of the labyrinth. It is a dictionary with two keys: 'V' and 'E'.
-                       'V' maps to a dictionary where each key is a vertex and the value is a list of vertices adjacent to the key.
-                       'E' maps to a dictionary where each key is a tuple of two vertices and the value is the weight of the edge
-                       between the vertices.
          :return: None
          """
-        vertex_list = graph['V']
-        edges_list = graph['E']
+        vertex_list = self.graph['V']
+        edges_list = self.graph['E']
         # vertex_o is the origin vertex, vertex_i is the destination vertex
         for vertex_o in vertex_list:
             for vertex_i in vertex_list[vertex_o]:
@@ -277,7 +280,7 @@ class Labyrinth:
         index = row * self.columns + column
         return self.list_tiles[index]
 
-    def _mark_turtle(self, turtle_positions: dict):
+    def _mark_turtle(self):
         """
          Mark the turtle's position and direction on the labyrinth.
 
@@ -288,15 +291,12 @@ class Labyrinth:
          If the second vertex is 'f', it means the turtle is facing up. Otherwise, it determines the direction of the turtle
          based on the relative positions of the vertices and rotates the turtle to the determined direction.
 
-         :param turtle_positions: (dict) A dictionary where each key is a vertex and the value is the vertex that the turtle
-                                  is facing towards. If the value is 'f', it means the turtle is in the last node
-                                  and facing up.
          :return: None
          """
         for tile in self.list_tiles:
             tile.change_turtle_state(erase=True)
 
-        for vertex_o, vertex_i in turtle_positions.items():
+        for vertex_o, vertex_i in self.graph['turtle'].items():
             if __name__ == '__main__':
                 print(f"Path: {vertex_o} -> {vertex_i}")
             # Calculate the row and column positions of the vertices
@@ -327,7 +327,47 @@ class Labyrinth:
         Draw the graph on the canvas.
         :return:
         """
-        pass
+
+        if self.graph:
+            # Delete the previous graph drawn on the canvas
+            self.delete_graph()
+            # self.list_nodes = [None for _ in range(self.rows * self.columns)]
+            radius = self.tile_length // 2 - self.tile_length // 4
+            for edge in self.graph['E']:
+                if self.graph['E'][edge] == 0:
+                    continue
+                else:
+                    vertex_o, vertex_i = edge[1:-1].split(', ')
+                    vertex_o, vertex_i = int(vertex_o), int(vertex_i)
+                    center_o = self.tiles_centers[vertex_o]
+                    center_i = self.tiles_centers[vertex_i]
+
+                    self.list_edges.append(self._draw_edge(center_o, center_i))
+                    color_o = self.graph['colors'][str(vertex_o)] if self.graph['colors'].get(
+                        str(vertex_o)) else 'coral'
+
+                    self.list_nodes.append(self._draw_node(center_o, radius, color=color_o))
+                    color_i = self.graph['colors'][str(vertex_i)] if self.graph['colors'].get(
+                        str(vertex_i)) else 'coral'
+                    self.list_nodes.append(self._draw_node(center_i, radius, color=color_i))
+
+    def delete_graph(self):
+        """
+        Delete the graph from the canvas.
+
+        This method iterates over the list of edges and nodes in the graph. For each edge and node,
+        it deletes it from the canvas.
+        :return: None
+        """
+        if self.list_edges:
+            for edge in self.list_edges:
+                self.canvas.delete(edge)
+            self.list_edges = list()  # Reset the list of edges
+
+        if self.list_nodes:
+            for node in self.list_nodes:
+                self.canvas.delete(node)
+            self.list_nodes = list()  # Reset the list of nodes
 
     def _draw_node(self, center: tuple, radius: int, color='coral'):
         """
@@ -364,3 +404,4 @@ if __name__ == '__main__':
     maze = Labyrinth(2, 3, path='/dev/shm/graph.json')  # linux
     # maze = Labyrinth(2, 3, path=r'C:\Users\German Andres\Desktop\grafo.json')  # windows
     maze.start()
+    # maze.draw_graph()

@@ -59,7 +59,7 @@ class Grafo:
         Adds an edge between two vertices in the graph.
     """
 
-    def __init__(self, V: dict = None, E: dict = None, turtle: dict = None):
+    def __init__(self, V: dict = None, E: dict = None, turtle: dict = None, colors: dict = None):
         """
         Initialize the graph with the vertices, edges, and the turtle's position.
 
@@ -73,6 +73,7 @@ class Grafo:
         :param turtle: (dict) The turtle's position and direction. Each key is a vertex and the value is the vertex that
                     the turtle is facing towards. If the value is 'f', it means the turtle is in the last node and
                     facing up. Default is an empty dictionary.
+        :param colors: (dict) The colors of the vertices. Each key is a vertex and the value is the color of the vertex.
         :return: None
         """
         if V is None:
@@ -84,12 +85,15 @@ class Grafo:
         if turtle is None:
             turtle = dict()
         self.turtle = turtle
+        if colors is None:
+            colors = dict()
+        self.colors = colors
 
     def __repr__(self):
         """
         Return the graph as a string
         """
-        return f'Vertices: {self.V}\nEdges: {self.E}\nTurtle: {self.turtle}'
+        return f'Vertices: {self.V}\nEdges: {self.E}\nTurtle: {self.turtle}\nColors: {self.colors}'
 
     def get_graph(self):
         """
@@ -101,7 +105,7 @@ class Grafo:
         :return: (dict) The graph. It includes 'V' followed by the vertices of the graph, 'E' followed by the edges of the
                  graph, and 'turtle' followed by the turtle's position and direction.
         """
-        grafo_g = {'V': self.V, 'E': self.E, 'turtle': self.turtle}
+        grafo_g = {'V': self.V, 'E': self.E, 'turtle': self.turtle, 'colors': self.colors}
         return grafo_g
 
     def send_graph(self):
@@ -176,8 +180,10 @@ if __name__ == '__main__':
     edges_list = {'(0, 1)': 1, '(0, 3)': 0, '(1, 2)': 0, '(1, 4)': 1, '(2, 5)': 0, '(3, 4)': 1, '(4, 5)': 1}
     # List of all vertices to show a turtle (the key) and the turtle's goal (the value)
     turtle_list = {0: 1, 1: 4, 4: 5, 5: 'f'}  # 'f' is a centinel value to represent turtle's exit
+    # Create a dictionary with the colors of the vertices
+    colors_list = {0: 'red', 1: 'blue', 2: 'green', 3: 'yellow', 4: 'purple', 5: 'orange'}
     # Create a graph
-    grafo = Grafo(vertex_list, edges_list, turtle_list)
+    grafo = Grafo(vertex_list, edges_list, turtle_list, colors_list)
     # Save the graph as a json file
     grafo.save_graph('/dev/shm/graph.json')
     print(grafo)

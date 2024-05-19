@@ -37,6 +37,10 @@ class Labyrinth:
         The path to the JSON file that contains the labyrinth data.
     list_tiles : list
         List to store the tiles.
+    list_edges : list
+        List to store the edges IDs.
+    list_nodes : list
+        List to store the nodes IDs.
     rows : int
         The number of rows in the labyrinth.
     columns : int
@@ -74,6 +78,14 @@ class Labyrinth:
         Get a specific tile from the list_tiles list.
     _mark_turtle(self, turtle_positions: dict):
         Mark the turtle's position and direction on the labyrinth.
+    draw_graph(self, graph: dict):
+        Draw the graph on the canvas.
+    delete_graph(self):
+        Delete the graph from the canvas.
+    _draw_node(self, center: tuple, radius: int, color: str):
+        Draw a node (circle) on the canvas.
+    _draw_edge(self, start: tuple, end: tuple):
+        Draw an edge (line) on the canvas.
     """
 
     def __init__(self, rows: int, columns: int, path=''):
@@ -107,7 +119,6 @@ class Labyrinth:
         self._create_canvas()  # Create the canvas for the labyrinth
         self.get_board()  # Generate the board for the labyrinth
         self.window.after(10, self.update_maze)  # Schedule the update_maze method to be called after 10 milliseconds
-        self.draw_graph()
 
     def start(self):
         """
@@ -325,24 +336,35 @@ class Labyrinth:
     def draw_graph(self):
         """
         Draw the graph on the canvas.
-        :return:
+
+        This method first checks if the graph exists. If it does, it deletes the previous graph drawn on the canvas.
+        Then it calculates the radius of the nodes to be drawn.
+
+        It then iterates over the edges in the graph. For each edge that exists (value is not 0), it splits the edge into
+        its origin and destination vertices, calculates the center points of these vertices, and draws the edge on the canvas.
+
+        It then checks if the origin and destination vertices have a specified color in the graph. If they do, it uses that
+        color to draw the nodes. If they don't, it uses the default color 'coral' to draw the nodes.
+
+        :return: None
         """
 
         if self.graph:
             # Delete the previous graph drawn on the canvas
             self.delete_graph()
-            # self.list_nodes = [None for _ in range(self.rows * self.columns)]
             radius = self.tile_length // 2 - self.tile_length // 4
+            # Iterate over the edges in the graph
             for edge in self.graph['E']:
-                if self.graph['E'][edge] == 0:
-                    continue
-                else:
-                    vertex_o, vertex_i = edge[1:-1].split(', ')
+                # Check if the edge exists
+                if self.graph['E'][edge] != 0:
+                    vertex_o, vertex_i = edge[1:-1].split(', ')  # Split the edge into origin and destination vertices
                     vertex_o, vertex_i = int(vertex_o), int(vertex_i)
                     center_o = self.tiles_centers[vertex_o]
                     center_i = self.tiles_centers[vertex_i]
 
+                    # Draw the edge on the canvas
                     self.list_edges.append(self._draw_edge(center_o, center_i))
+                    # Check if the origin and destination vertices have a specified color
                     color_o = self.graph['colors'][str(vertex_o)] if self.graph['colors'].get(
                         str(vertex_o)) else 'coral'
 
@@ -369,7 +391,7 @@ class Labyrinth:
                 self.canvas.delete(node)
             self.list_nodes = list()  # Reset the list of nodes
 
-    def _draw_node(self, center: tuple, radius: int, color='coral'):
+    def _draw_node(self, center: tuple, radius: int, color: str):
         """
         Draw a node (circle) on the canvas.
 
@@ -378,14 +400,14 @@ class Labyrinth:
 
         :param center: (tuple) A tuple containing the x and y coordinates of the center of the circle.
         :param radius: (int) The radius of the circle.
-        :param color: (str) The color to fill the circle with. Default is 'coral'.
+        :param color: (str) The color to fill the circle with.
         :return: (int) The ID of the created circle.
         """
         circle = self.canvas.create_oval(center[0] - radius, center[1] - radius, center[0] + radius, center[1] + radius,
                                          fill=color)
         return circle
 
-    def _draw_edge(self, start: tuple, end: tuple, color='black'):
+    def _draw_edge(self, start: tuple, end: tuple):
         """
         Draw an edge (line) on the canvas.
 
@@ -393,10 +415,9 @@ class Labyrinth:
 
         :param start: (tuple) A tuple containing the x and y coordinates of the start point of the line.
         :param end: (tuple) A tuple containing the x and y coordinates of the end point of the line.
-        :param color: (str) The color of the line. Default is 'black'.
         :return: (int) The ID of the created line.
         """
-        line = self.canvas.create_line(start[0], start[1], end[0], end[1], fill=color)
+        line = self.canvas.create_line(start[0], start[1], end[0], end[1])
         return line
 
 
@@ -404,4 +425,3 @@ if __name__ == '__main__':
     maze = Labyrinth(2, 3, path='/dev/shm/graph.json')  # linux
     # maze = Labyrinth(2, 3, path=r'C:\Users\German Andres\Desktop\grafo.json')  # windows
     maze.start()
-    # maze.draw_graph()

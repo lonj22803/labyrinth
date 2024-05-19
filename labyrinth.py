@@ -93,6 +93,7 @@ class Labyrinth:
         # Create a 2D array to store the tiles (not a definitive feature. Could be deleted)
         self.tile_array = [[0 for _ in range(columns)] for _ in range(rows)]
         self.tile_length = 50  # Length of each tile in pixels
+        self.tiles_centers = list()  # List to store the center point of each tile
 
         self.canvas_sz = self._get_canvas_sz()  # Size of the canvas
         self.window = tk.Tk()  # Create a new Tkinter window
@@ -138,6 +139,8 @@ class Labyrinth:
                 tile_pos_x = j * self.tile_length + 20  # Add 20 pixels to the x position for the window border
                 tile_pos_y = i * self.tile_length + 20  # Add 20 pixels to the y position for the window border
                 tile_mn = Tile(self.canvas, tile_pos_x, tile_pos_y, length=self.tile_length)
+                self.tiles_centers.append((tile_pos_x + self.tile_length // 2,
+                                           tile_pos_y + self.tile_length // 2))  # Store the top left point of the tile
                 self.tile_array[i][j] = tile_mn  # This still is a possible feature (could be deleted)
                 self.list_tiles.append(tile_mn)  # Add the tile to the list of tiles
                 tile_mn.draw()  # Draw the tile on the canvas
@@ -318,6 +321,32 @@ class Labyrinth:
                 tile.rotate_turtle(direction)
                 # Draw the turtle on the tile
                 tile.change_turtle_state(erase=False)
+
+    def draw_graph(self):
+        """
+        Draw the graph on the canvas.
+        :return:
+        """
+        pass
+
+    def _draw_node(self, center: tuple, radius: int, color='coral'):
+        """
+        Draw a node (circle) on the canvas.
+
+        This method creates a circle on the canvas at the specified center point with the specified radius and color.
+        The circle is filled with the specified color.
+
+        :param center: (tuple) A tuple containing the x and y coordinates of the center of the circle.
+        :param radius: (int) The radius of the circle.
+        :param color: (str) The color to fill the circle with. Default is 'coral'.
+        :return: (int) The ID of the created circle.
+        """
+        circle = self.canvas.create_oval(center[0] - radius, center[1] - radius, center[0] + radius, center[1] + radius,
+                                         fill=color)
+        return circle
+
+    def _draw_edge(self, start: tuple, end: tuple, color='black'):
+        pass
 
 
 if __name__ == '__main__':

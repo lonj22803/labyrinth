@@ -37,9 +37,9 @@ class Labyrinth:
         The path to the JSON file that contains the labyrinth data.
     list_tiles : list
         List to store the tiles.
-    list_edges : list
+    _list_edges : list
         List to store the edges IDs.
-    list_nodes : list
+    _list_nodes : list
         List to store the nodes IDs.
     rows : int
         The number of rows in the labyrinth.
@@ -102,15 +102,15 @@ class Labyrinth:
         self.path = path  # Path to the JSON file
 
         self.list_tiles = list()  # List to store the tiles
-        self.list_edges = list()  # List to store the edges IDs
-        self.list_nodes = list()  # List to store the nodes IDs
+        self._list_edges = list()  # List to store the edges IDs
+        self._list_nodes = list()  # List to store the nodes IDs
 
         self.rows, self.columns = rows, columns  # Number of rows and columns in the labyrinth
         # Create a 2D array to store the tiles (not a definitive feature. Could be deleted)
         self.tile_array = [[0 for _ in range(columns)] for _ in range(rows)]
         self.tile_length = 50  # Length of each tile in pixels
         self.tiles_centers = list()  # List to store the center point of each tile
-        self.tiles_marks = list()  # List to store the marks of the tiles
+        self._tiles_marks = list()  # List to store the marks IDs of the tiles
 
         self.canvas_sz = self._get_canvas_sz()  # Size of the canvas
         self.window = tk.Tk()  # Create a new Tkinter window
@@ -219,7 +219,6 @@ class Labyrinth:
                 if __name__ == '__main__':
                     print('The graph structure has been updated from file.')
                 self._check_walls()
-
                 # self.draw_graph()
                 self._mark_tiles()
                 self._mark_turtle()
@@ -241,17 +240,17 @@ class Labyrinth:
             for node in self.graph['colors']:
                 color = self.graph['colors'][str(node)]
                 center = self.tiles_centers[int(node)]
-                self.tiles_marks.append(self._draw_node(center, self.tile_length // 4, color))
+                self._tiles_marks.append(self._draw_node(center, self.tile_length // 4, color))
 
     def _delete_marks(self):
         """
         Delete the nodes from the canvas.
         :return: None
         """
-        if self.tiles_marks:
-            for mark in self.tiles_marks:
+        if self._tiles_marks:
+            for mark in self._tiles_marks:
                 self.canvas.delete(mark)
-            self.tiles_marks = list()
+            self._tiles_marks = list()
 
     def _check_walls(self):
         """
@@ -389,15 +388,15 @@ class Labyrinth:
                     center_i = self.tiles_centers[vertex_i]
 
                     # Draw the edge on the canvas
-                    self.list_edges.append(self._draw_edge(center_o, center_i))
+                    self._list_edges.append(self._draw_edge(center_o, center_i))
                     # Check if the origin and destination vertices have a specified color
                     color_o = self.graph['colors'][str(vertex_o)] if self.graph['colors'].get(
                         str(vertex_o)) else 'coral'
 
-                    self.list_nodes.append(self._draw_node(center_o, radius, color=color_o))
+                    self._list_nodes.append(self._draw_node(center_o, radius, color=color_o))
                     color_i = self.graph['colors'][str(vertex_i)] if self.graph['colors'].get(
                         str(vertex_i)) else 'coral'
-                    self.list_nodes.append(self._draw_node(center_i, radius, color=color_i))
+                    self._list_nodes.append(self._draw_node(center_i, radius, color=color_i))
 
     def delete_graph(self):
         """
@@ -407,15 +406,15 @@ class Labyrinth:
         it deletes it from the canvas.
         :return: None
         """
-        if self.list_edges:
-            for edge in self.list_edges:
+        if self._list_edges:
+            for edge in self._list_edges:
                 self.canvas.delete(edge)
-            self.list_edges = list()  # Reset the list of edges
+            self._list_edges = list()  # Reset the list of edges
 
-        if self.list_nodes:
-            for node in self.list_nodes:
+        if self._list_nodes:
+            for node in self._list_nodes:
                 self.canvas.delete(node)
-            self.list_nodes = list()  # Reset the list of nodes
+            self._list_nodes = list()  # Reset the list of nodes
 
     def _draw_node(self, center: tuple, radius: int, color: str):
         """

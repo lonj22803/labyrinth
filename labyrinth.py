@@ -110,6 +110,7 @@ class Labyrinth:
         self.tile_array = [[0 for _ in range(columns)] for _ in range(rows)]
         self.tile_length = 50  # Length of each tile in pixels
         self.tiles_centers = list()  # List to store the center point of each tile
+        self.tiles_marks = list()  # List to store the marks of the tiles
 
         self.canvas_sz = self._get_canvas_sz()  # Size of the canvas
         self.window = tk.Tk()  # Create a new Tkinter window
@@ -202,7 +203,8 @@ class Labyrinth:
             if __name__ == '__main__':
                 print('The graph structure has been updated from Queue.')
             self._check_walls()
-            self.draw_graph()
+            # self.draw_graph()
+            self._mark_tiles()
             self._mark_turtle()
 
         else:
@@ -217,7 +219,9 @@ class Labyrinth:
                 if __name__ == '__main__':
                     print('The graph structure has been updated from file.')
                 self._check_walls()
-                self.draw_graph()
+
+                # self.draw_graph()
+                self._mark_tiles()
                 self._mark_turtle()
 
         if imprimir:
@@ -226,6 +230,28 @@ class Labyrinth:
             imprimir = False
 
         self.canvas.after(10, self.update_maze, imprimir)
+
+    def _mark_tiles(self):
+        """
+        Draw a node (circle) on the canvas for each tile in the labyrinth.
+        :return: None
+        """
+        self._delete_marks()
+        if self.graph:
+            for node in self.graph['colors']:
+                color = self.graph['colors'][str(node)]
+                center = self.tiles_centers[int(node)]
+                self.tiles_marks.append(self._draw_node(center, self.tile_length // 4, color))
+
+    def _delete_marks(self):
+        """
+        Delete the nodes from the canvas.
+        :return: None
+        """
+        if self.tiles_marks:
+            for mark in self.tiles_marks:
+                self.canvas.delete(mark)
+            self.tiles_marks = list()
 
     def _check_walls(self):
         """
@@ -404,7 +430,7 @@ class Labyrinth:
         :return: (int) The ID of the created circle.
         """
         circle = self.canvas.create_oval(center[0] - radius, center[1] - radius, center[0] + radius, center[1] + radius,
-                                         fill=color)
+                                         fill=color, outline='')
         return circle
 
     def _draw_edge(self, start: tuple, end: tuple):

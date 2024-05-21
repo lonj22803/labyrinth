@@ -177,7 +177,7 @@ if __name__ == '__main__':
     # Create a dictionary with the adjacency list of weighted edges of the graph
     # If edge weight is 0, there is no path between the nodes (a wall exists),
     # if edge weight is 1, there is a path between the nodes (a wall does not exist)
-    edges_list = {'(0, 1)': 1, '(0, 3)': 1, '(1, 2)': 1, '(1, 4)': 0, '(2, 5)': 0, '(3, 4)': 1, '(4, 5)': 1}
+    edges_list = {'(0, 1)': 1, '(0, 3)': 1, '(1, 2)': 1, '(1, 4)': 0, '(2, 5)': 0, '(3, 4)': 1, '(4, 5)': 1, '(3, 5)':1, '(3, 1)':1}
     # List of all vertices to show a turtle (the key) and the turtle's goal (the value)
     turtle_list = {}# {0: 1, 1: 4, 4: 3, 5: 'f'}  # 'f' is a centinel value to represent turtle's exit
     # Create a dictionary with the colors of the vertices

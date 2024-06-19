@@ -11,6 +11,8 @@ This module is intended to be run as a standalone script.
 """
 
 from grafo import Grafo
+from labyrinth import Labyrinth
+
 
 if __name__ == '__main__':
     grafo = Grafo()
@@ -27,5 +29,7 @@ if __name__ == '__main__':
     print(grafo)
 
     # save graph to the comm file. This file is read by tue GUI.
-    grafo.save_graph('/dev/shm/graph.json')  # For operation in Linux
-    # grafo.save_graph(r'C:\Users\German Andres\Desktop\grafo.json') # For operation in Windows
+    grafo.save_graph(r'C:\Users\USER\PycharmProjects\labyrinth\graph.json')  # For operation in Linux
+    #grafo.save_graph(r'C:\Users\German Andres\Desktop\grafo.json') # For operation in Windows
+    maze = Labyrinth(2, 3, path=r'C:\Users\USER\PycharmProjects\labyrinth\graph.json')  # windows
+    maze.start()

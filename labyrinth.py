@@ -448,8 +448,11 @@ class Labyrinth:
         line = self.canvas.create_line(start[0], start[1], end[0], end[1])
         return line
 
+    def create_grid(self):
+        pass
+
 
 if __name__ == '__main__':
-    maze = Labyrinth(2, 3, path='/dev/shm/graph.json')  # linux
-    # maze = Labyrinth(2, 3, path=r'C:\Users\German Andres\Desktop\grafo.json')  # windows
+    # maze = Labyrinth(2, 3, path='/dev/shm/graph.json')  # linux
+    maze = Labyrinth(15, 15, path=r'C:\Users\USER\PycharmProjects\labyrinth\solucion_parcial\grafo1.json')  # windows
     maze.start()

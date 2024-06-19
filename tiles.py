@@ -99,8 +99,8 @@ class Tile:
         It constructs the path to the turtle image file and returns a PhotoImage object created from that file.
 
         The method checks the length of the tile and based on its size, it selects the appropriate turtle image size.
-        The turtle image size can be "100", "75", or "50", corresponding to a tile length greater than 200,
-        greater than 100, or less than or equal to 100, respectively.
+        The turtle image size can be "100", "75", "50", or "25", corresponding to a tile length greater than 200,
+        greater than 100, greater than 75, or less than or equal to 75, respectively.
 
         The path to the turtle image file is constructed using the selected turtle image size and the current
         orientation of the turtle. The path is then used to create a PhotoImage object, which is returned by the method.
@@ -116,8 +116,9 @@ class Tile:
             turtle_img_size = "50"
         else:
             turtle_img_size = "25"
-        # Construct the path to the turtle image file
-        turtle_img_path = f"resources/{turtle_img_size}/turtle_{turtle_img_size}px_{self.turtle_orientation}.png"
+
+        # Construct the absolute path to the turtle image file
+        turtle_img_path = f"C:\\Users\\USER\\PycharmProjects\\labyrinth\\resources\\{turtle_img_size}\\turtle_{turtle_img_size}px_{self.turtle_orientation}.png"
         return tk.PhotoImage(file=turtle_img_path)
 
     def draw(self, bg='lightblue', turtle=False):
